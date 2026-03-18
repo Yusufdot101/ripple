@@ -45,7 +45,7 @@ func (asvc *AuthService) HandleCallback(ctx context.Context, code, nonce string)
 		user.ID = gotUser.ID
 	}
 
-	refreshToken, err := asvc.tsvc.New(domain.RANDOMSTRING, domain.REFRESH, user.ID)
+	refreshToken, err := asvc.tsvc.New(domain.UUID, domain.REFRESH, user.ID)
 	if err != nil {
 		return "", "", err
 	}

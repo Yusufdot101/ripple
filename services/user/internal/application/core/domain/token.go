@@ -10,8 +10,8 @@ type (
 )
 
 const (
-	RANDOMSTRING TokenType = "random string"
-	JWT          TokenType = "jwt"
+	UUID TokenType = "uuid"
+	JWT  TokenType = "jwt"
 
 	REFRESH TokenUse = "refresh"
 	ACCESS  TokenUse = "access"

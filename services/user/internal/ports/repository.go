@@ -7,6 +7,4 @@ type Repository interface {
 	FindUserByProviderAndSub(provider, sub string) (*domain.User, error)
 
 	InsertToken(token *domain.Token) error
-	// GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)
-	// DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error
 }

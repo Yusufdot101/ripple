@@ -10,4 +10,5 @@ var (
 	ErrInvalidNonce      = errors.New("invalid nonce in id_token")
 	ErrInvalidTokenUse   = errors.New("invalid token use")
 	ErrInvalidTokeType   = errors.New("invalid token type")
+	ErrInvalidJWT        = errors.New("unexpected signing method")
 )

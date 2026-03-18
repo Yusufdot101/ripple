@@ -41,7 +41,7 @@ func (tsvc *TokenService) New(tokenType domain.TokenType, tokenUse domain.TokenU
 	}
 	var tokenString string
 	switch tokenType {
-	case domain.RANDOMSTRING:
+	case domain.UUID:
 		tokenString = generateUUID()
 	case domain.JWT:
 		tokenString = genenerateJWT(userID)

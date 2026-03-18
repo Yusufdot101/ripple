@@ -82,7 +82,7 @@ func TestHandleCallback(t *testing.T) {
 					Email:    "ym@gmail.com",
 				}, nil)
 
-				tsvc.On("New", domain.RANDOMSTRING, domain.REFRESH, uint(1)).Return(&domain.Token{
+				tsvc.On("New", domain.UUID, domain.REFRESH, uint(1)).Return(&domain.Token{
 					TokenString: "tokenString",
 					UserID:      1,
 					Expires:     time.Date(2000, 1, 1, 1, 0, 0, 0, time.Local),
@@ -120,7 +120,7 @@ func TestHandleCallback(t *testing.T) {
 					Email:    "ym@gmail.com",
 				}).Return(nil)
 
-				tsvc.On("New", domain.RANDOMSTRING, domain.REFRESH, uint(0)).Return(&domain.Token{
+				tsvc.On("New", domain.UUID, domain.REFRESH, uint(0)).Return(&domain.Token{
 					TokenString: "tokenString",
 					UserID:      0,
 					Expires:     time.Date(2000, 1, 1, 1, 0, 0, 0, time.Local),
@@ -142,23 +142,25 @@ func TestHandleCallback(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		repo := &mockRepo{}
-		provider := &mockProvider{}
-		tsvc := &mockTokenService{}
+		t.Run(tt.name, func(t *testing.T) {
+			repo := &mockRepo{}
+			provider := &mockProvider{}
+			tsvc := &mockTokenService{}
 
-		tt.setupMocks(repo, tsvc, provider)
+			tt.setupMocks(repo, tsvc, provider)
 
-		asvc := NewAuthService(repo, provider, tsvc)
-		ctx := context.Background()
-		_, _, err := asvc.HandleCallback(ctx, "code", "nonce")
-		if err != nil {
-			if !tt.wantErr {
-				t.Fatalf("unexpected error %v\n", err)
+			asvc := NewAuthService(repo, provider, tsvc)
+			ctx := context.Background()
+			_, _, err := asvc.HandleCallback(ctx, "code", "nonce")
+			if err != nil {
+				if !tt.wantErr {
+					t.Fatalf("unexpected error %v\n", err)
+				}
+				if !errors.Is(err, tt.err) {
+					t.Fatalf("expected error:%v got error: %v\n", tt.err, err)
+				}
+				return
 			}
-			if !errors.Is(err, tt.err) {
-				t.Fatalf("expected error:%v got error: %v\n", tt.err, err)
-			}
-			return
-		}
+		})
 	}
 }
