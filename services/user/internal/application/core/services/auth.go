@@ -26,13 +26,13 @@ func (asvc *AuthService) NewUser(user *domain.User) error {
 	return asvc.repo.InsertUser(user)
 }
 
-func (asvc *AuthService) HandleCallback(ctx context.Context, code, state, nonce string) (string, string, error) {
+func (asvc *AuthService) HandleCallback(ctx context.Context, code, nonce string) (string, string, error) {
 	user, err := asvc.provider.GetUserInfo(ctx, code, nonce)
 	if err != nil {
 		return "", "", err
 	}
 
-	_, err = asvc.repo.FindUserByProviderAndSub(user.Provider, user.Sub)
+	gotUser, err := asvc.repo.FindUserByProviderAndSub(user.Provider, user.Sub)
 	if err != nil && !errors.Is(err, domain.ErrUserNotFound) {
 		return "", "", err
 	} else if errors.Is(err, domain.ErrUserNotFound) {
@@ -41,6 +41,8 @@ func (asvc *AuthService) HandleCallback(ctx context.Context, code, state, nonce 
 		if err != nil {
 			return "", "", err
 		}
+	} else {
+		user.ID = gotUser.ID
 	}
 
 	refreshToken, err := asvc.tsvc.New(domain.RANDOMSTRING, domain.REFRESH, user.ID)
