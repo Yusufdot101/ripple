@@ -9,5 +9,5 @@ import (
 type AuthService interface {
 	NewUser(user *domain.User) error
 	BeginAuth() (authURL, state, nonce string)
-	HandleCallback(ctx context.Context, code, state, nonce string) (refreshToken, accessToken string, err error)
+	HandleCallback(ctx context.Context, code, nonce string) (refreshToken, accessToken string, err error)
 }
