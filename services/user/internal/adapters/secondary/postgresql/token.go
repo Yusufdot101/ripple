@@ -17,8 +17,6 @@ type Token struct {
 	TokenType   domain.TokenType
 }
 
-// InsertToken(token *domain.Token) error
-// GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)
 // DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error
 
 func (a *Adapter) InsertToken(token *domain.Token) error {
@@ -38,4 +36,19 @@ func (a *Adapter) InsertToken(token *domain.Token) error {
 	}
 
 	return res.Error
+}
+
+func (a *Adapter) GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (
+	*domain.Token, error,
+) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	tokenModel := &Token{}
+	res := a.DB.WithContext(ctx).First(tokenModel)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	token := domain.NewToken(tokenModel.Use, tokenModel.TokenType, tokenModel.UserID, tokenModel.TokenString, tokenModel.Expires)
+	return token, nil
 }

@@ -14,3 +14,19 @@ func (rts *RepositoryTestSuite) TestInsertToken() {
 	err = adapter.InsertToken(token)
 	rts.Nil(err)
 }
+
+func (rts *RepositoryTestSuite) TestGetTokenByStringAndUse() {
+	adapter, err := NewAdapter(rts.DataSourceURL)
+	rts.Require().Nil(err)
+
+	token := domain.NewToken(domain.REFRESH, domain.UUID, 1, "refreshToken", time.Now())
+	err = adapter.InsertToken(token)
+	rts.Require().Nil(err)
+
+	gotToken, err := adapter.GetTokenByStringAndUse(token.TokenString, token.Use)
+	rts.Require().Nil(err)
+	rts.Assert().Equal(token.TokenString, gotToken.TokenString)
+	rts.Assert().Equal(token.Use, gotToken.Use)
+	rts.Assert().Equal(token.TokenType, gotToken.TokenType)
+	rts.Assert().Equal(token.UserID, gotToken.UserID)
+}
