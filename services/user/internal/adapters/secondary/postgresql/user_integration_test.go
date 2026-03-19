@@ -15,7 +15,8 @@ func (rts *RepositoryTestSuite) TestFindUserByProviderAndSub() {
 	adapter, err := NewAdapter(rts.DataSourceURL)
 	rts.Require().Nil(err)
 	user := domain.NewUser("yusuf", "example@gmail.com", "google", "1")
-	adapter.InsertUser(user)
+	err = adapter.InsertUser(user)
+	rts.Nil(err)
 
 	gotUser, err := adapter.FindUserByProviderAndSub(user.Provider, user.Sub)
 	rts.Nil(err)
