@@ -39,25 +39,38 @@ func NewGoogleOIDC(ctx context.Context, clientID, clientSecret, redirectURL stri
 	}, nil
 }
 
-func (g *GoogleOIDC) GetUserInfo(ctx context.Context, code, expectedNonce string) (*domain.User, error) {
-	token, err := g.config.Exchange(ctx, code)
-	if err != nil {
-		return nil, err
-	}
-
-	rawIDToken, ok := token.Extra("id_token").(string)
-	if !ok {
-		return nil, domain.ErrNoIDToken
-	}
-
+func (g *GoogleOIDC) verifyIDToken(ctx context.Context, rawIDToken string, expectedNonce string) (*oidc.IDToken, error) {
 	verifier := g.provider.Verifier(&oidc.Config{ClientID: g.config.ClientID})
 	idToken, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
 		return nil, err
 	}
+	return idToken, nil
+}
 
-	if idToken.Nonce != expectedNonce {
-		return nil, domain.ErrInvalidNonce
+func (g *GoogleOIDC) exchangeCode(ctx context.Context, code string) (string, error) {
+	token, err := g.config.Exchange(ctx, code)
+	if err != nil {
+		return "", err
+	}
+
+	rawIDToken, ok := token.Extra("id_token").(string)
+	if !ok {
+		return "", domain.ErrNoIDToken
+	}
+
+	return rawIDToken, nil
+}
+
+func (g *GoogleOIDC) GetUserInfo(ctx context.Context, code, expectedNonce string) (*domain.User, error) {
+	rawIDToken, err := g.exchangeCode(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	idToken, err := g.verifyIDToken(ctx, rawIDToken, expectedNonce)
+	if err != nil {
+		return nil, err
 	}
 
 	var claims struct {
