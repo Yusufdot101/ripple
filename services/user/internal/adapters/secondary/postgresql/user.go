@@ -41,7 +41,7 @@ func (a *Adapter) FindUserByProviderAndSub(provider, sub string) (*domain.User, 
 	res := a.DB.First(userModel, "provider = ? AND sub = ?", provider, sub)
 	if res.Error != nil {
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			return nil, domain.ErrUserNotFound
+			return nil, domain.ErrRecordNotFound
 		}
 		return nil, res.Error
 	}

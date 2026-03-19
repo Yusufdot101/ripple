@@ -33,9 +33,9 @@ func (asvc *AuthService) HandleCallback(ctx context.Context, code, nonce string)
 	}
 
 	gotUser, err := asvc.repo.FindUserByProviderAndSub(user.Provider, user.Sub)
-	if err != nil && !errors.Is(err, domain.ErrUserNotFound) {
+	if err != nil && !errors.Is(err, domain.ErrRecordNotFound) {
 		return "", "", err
-	} else if errors.Is(err, domain.ErrUserNotFound) {
+	} else if errors.Is(err, domain.ErrRecordNotFound) {
 		// new user
 		err = asvc.repo.InsertUser(user)
 		if err != nil {

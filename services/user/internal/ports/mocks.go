@@ -479,6 +479,74 @@ func (_c *MockRepository_FindUserByProviderAndSub_Call) RunAndReturn(run func(pr
 	return _c
 }
 
+// GetTokenByStringAndUse provides a mock function for the type MockRepository
+func (_mock *MockRepository) GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error) {
+	ret := _mock.Called(tokenString, tokenUse)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetTokenByStringAndUse")
+	}
+
+	var r0 *domain.Token
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string, domain.TokenUse) (*domain.Token, error)); ok {
+		return returnFunc(tokenString, tokenUse)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string, domain.TokenUse) *domain.Token); ok {
+		r0 = returnFunc(tokenString, tokenUse)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Token)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string, domain.TokenUse) error); ok {
+		r1 = returnFunc(tokenString, tokenUse)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_GetTokenByStringAndUse_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTokenByStringAndUse'
+type MockRepository_GetTokenByStringAndUse_Call struct {
+	*mock.Call
+}
+
+// GetTokenByStringAndUse is a helper method to define mock.On call
+//   - tokenString string
+//   - tokenUse domain.TokenUse
+func (_e *MockRepository_Expecter) GetTokenByStringAndUse(tokenString interface{}, tokenUse interface{}) *MockRepository_GetTokenByStringAndUse_Call {
+	return &MockRepository_GetTokenByStringAndUse_Call{Call: _e.mock.On("GetTokenByStringAndUse", tokenString, tokenUse)}
+}
+
+func (_c *MockRepository_GetTokenByStringAndUse_Call) Run(run func(tokenString string, tokenUse domain.TokenUse)) *MockRepository_GetTokenByStringAndUse_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 domain.TokenUse
+		if args[1] != nil {
+			arg1 = args[1].(domain.TokenUse)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_GetTokenByStringAndUse_Call) Return(token *domain.Token, err error) *MockRepository_GetTokenByStringAndUse_Call {
+	_c.Call.Return(token, err)
+	return _c
+}
+
+func (_c *MockRepository_GetTokenByStringAndUse_Call) RunAndReturn(run func(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)) *MockRepository_GetTokenByStringAndUse_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // InsertToken provides a mock function for the type MockRepository
 func (_mock *MockRepository) InsertToken(token *domain.Token) error {
 	ret := _mock.Called(token)

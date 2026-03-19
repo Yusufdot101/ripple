@@ -64,7 +64,7 @@ func TestHandleCallback(t *testing.T) {
 					Email:    "ym@gmail.com",
 				}, nil)
 
-				r.EXPECT().FindUserByProviderAndSub("google", "1").Return(&domain.User{}, domain.ErrUserNotFound)
+				r.EXPECT().FindUserByProviderAndSub("google", "1").Return(&domain.User{}, domain.ErrRecordNotFound)
 
 				r.EXPECT().InsertUser(&domain.User{
 					Sub:      "1",

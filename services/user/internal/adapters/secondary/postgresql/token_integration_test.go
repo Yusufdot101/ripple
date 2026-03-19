@@ -19,7 +19,7 @@ func (rts *RepositoryTestSuite) TestGetTokenByStringAndUse() {
 	adapter, err := NewAdapter(rts.DataSourceURL)
 	rts.Require().Nil(err)
 
-	token := domain.NewToken(domain.REFRESH, domain.UUID, 1, "refreshToken", time.Now())
+	token := domain.NewToken(domain.REFRESH, domain.UUID, 1, "refreshToken", time.Now().Add(time.Hour))
 	err = adapter.InsertToken(token)
 	rts.Require().Nil(err)
 

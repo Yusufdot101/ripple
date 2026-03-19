@@ -3,7 +3,7 @@ package domain
 import "errors"
 
 var (
-	ErrUserNotFound      = errors.New("user not found")
+	ErrRecordNotFound    = errors.New("user not found")
 	ErrUserAlreadyExists = errors.New("user already exists")
 	ErrInvalidToken      = errors.New("invalid token")
 	ErrNoIDToken         = errors.New("no id_token field in oauth2 token")

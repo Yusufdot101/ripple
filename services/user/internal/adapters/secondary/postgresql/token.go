@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
@@ -45,8 +46,11 @@ func (a *Adapter) GetTokenByStringAndUse(tokenString string, tokenUse domain.Tok
 	defer cancel()
 
 	tokenModel := &Token{}
-	res := a.DB.WithContext(ctx).First(tokenModel)
+	res := a.DB.WithContext(ctx).First(tokenModel, "expires > ?", time.Now())
 	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrRecordNotFound
+		}
 		return nil, res.Error
 	}
 	token := domain.NewToken(tokenModel.Use, tokenModel.TokenType, tokenModel.UserID, tokenModel.TokenString, tokenModel.Expires)
