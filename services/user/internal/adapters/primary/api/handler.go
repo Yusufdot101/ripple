@@ -11,12 +11,14 @@ import (
 )
 
 type handler struct {
-	svc ports.AuthService
+	svc  ports.AuthService
+	tsvc ports.TokenService
 }
 
-func NewHandler(svc ports.AuthService) *handler {
+func NewHandler(svc ports.AuthService, tsvc ports.TokenService) *handler {
 	return &handler{
-		svc: svc,
+		svc:  svc,
+		tsvc: tsvc,
 	}
 }
 

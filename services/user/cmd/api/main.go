@@ -33,7 +33,7 @@ func main() {
 	asvc := services.NewAuthService(repo, googleOIDC, tsvc)
 
 	// make server listen
-	server := api.NewServer(asvc)
+	server := api.NewServer(asvc, tsvc)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("error starting server: %v\n", err)
 	}

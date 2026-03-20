@@ -12,8 +12,8 @@ type Server struct {
 	router *gin.Engine
 }
 
-func NewServer(svc ports.AuthService) *Server {
-	h := NewHandler(svc)
+func NewServer(svc ports.AuthService, tsvc ports.TokenService) *Server {
+	h := NewHandler(svc, tsvc)
 	r := h.RegisterRoutes()
 	return &Server{
 		router: r,

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"testing"
 
@@ -93,5 +94,29 @@ func TestNew(t *testing.T) {
 				return
 			}
 		})
+	}
+}
+
+func TestRefreshAccessToken(t *testing.T) {
+	repo := ports.NewMockRepository(t)
+	userID := 1
+	repo.EXPECT().GetTokenByStringAndUse("refreshToken", domain.REFRESH).Return(&domain.Token{
+		UserID: uint(userID),
+	}, nil)
+	tsvc := NewTokenService(repo)
+	accessToken, err := tsvc.RefreshAccessToken("refreshToken")
+	if err != nil {
+		log.Fatalf("unexpected error: %v", err)
+	}
+
+	token, err := ValidateJWT(accessToken)
+	if err != nil {
+		log.Fatalf("unexpected error: %v", err)
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	sub, ok := claims["sub"].(string)
+	if !ok || strconv.Itoa(userID) != sub {
+		t.Fatal("invalid sub: ", sub)
 	}
 }
