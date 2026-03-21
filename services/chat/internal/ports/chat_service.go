@@ -1,3 +1,5 @@
 package ports
 
-type ChatService interface{}
+type ChatService interface {
+	NewChatWithParticipants(userIDs []uint) (uint, error)
+}

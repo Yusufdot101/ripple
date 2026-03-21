@@ -10,8 +10,8 @@ import (
 
 type ChatParticipant struct {
 	gorm.Model
-	UserID uint
-	ChatID uint
+	UserID uint `gorm:"uniqueIndex:user_chat_idx"`
+	ChatID uint `gorm:"uniqueIndex:user_chat_idx"`
 }
 
 func (a *Adapter) InsertChatParticipant(chatParticipant *domain.ChatParticipant) error {

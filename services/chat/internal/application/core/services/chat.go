@@ -1,6 +1,8 @@
 package services
 
 import (
+	"log"
+
 	"github.com/Yusufdot101/ribble/services/chat/internal/application/core/domain"
 	"github.com/Yusufdot101/ribble/services/chat/internal/ports"
 )
@@ -16,13 +18,16 @@ func NewChatService(repo ports.Repository) *ChatService {
 }
 
 func (csvc *ChatService) NewChatWithParticipants(userIDs []uint) (uint, error) {
+	log.Println("start", userIDs)
 	chatID := uint(0)
 	err := csvc.repo.WithTx(func(repo ports.Repository) error {
+		log.Println("beginning")
 		chat := domain.NewChat()
 		err := repo.InsertChat(chat)
 		if err != nil {
 			return err
 		}
+		log.Println("chat: ", chat)
 		chatID = chat.ID
 
 		for _, userID := range userIDs {
@@ -31,7 +36,9 @@ func (csvc *ChatService) NewChatWithParticipants(userIDs []uint) (uint, error) {
 			if err != nil {
 				return err
 			}
+			log.Println("participant: ", participant)
 		}
+		log.Println("ending")
 		return nil
 	})
 	if err != nil {
