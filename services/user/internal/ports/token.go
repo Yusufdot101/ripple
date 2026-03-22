@@ -7,4 +7,5 @@ type TokenService interface {
 	Save(token *domain.Token) error
 	GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)
 	RefreshAccessToken(refreshTokenString string) (string, error)
+	DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error
 }

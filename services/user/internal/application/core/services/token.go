@@ -87,6 +87,10 @@ func (tsvc *TokenService) RefreshAccessToken(refreshTokenString string) (string,
 	return accessToken, nil
 }
 
+func (tsvc *TokenService) DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error {
+	return tsvc.repo.DeleteTokenByStringAndUse(tokenString, tokenUse)
+}
+
 func ValidateJWT(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		// ensure the token was signed with HMAC, not something else

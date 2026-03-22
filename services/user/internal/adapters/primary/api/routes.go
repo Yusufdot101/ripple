@@ -14,11 +14,12 @@ func (h *handler) RegisterRoutes() *gin.Engine {
 	group.Use(cors.New(cors.Config{
 		AllowCredentials: true,
 		AllowOrigins:     []string{config.GetFrontendURL()},
-		AllowMethods:     []string{http.MethodGet},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost},
 		AllowHeaders:     []string{"Content-Type"},
 	}))
 	group.GET("/google", h.googleBegin)
 	group.GET("/google/callback", h.googleCallback)
 	group.GET("/refreshtoken", h.RefreshToken)
+	group.POST("/logout", h.logout)
 	return r
 }

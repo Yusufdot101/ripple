@@ -8,4 +8,5 @@ type Repository interface {
 
 	InsertToken(token *domain.Token) error
 	GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)
+	DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error
 }
