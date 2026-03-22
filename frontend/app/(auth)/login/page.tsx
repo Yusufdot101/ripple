@@ -2,15 +2,25 @@
 import Icon from "@/components/Icon";
 import google from "@/assets/google.svg";
 import { useRouter } from "next/navigation";
+import { BASE_API_URL } from "@/utils/api";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useEffect } from "react";
 
 const googleInfo = {
     src: google,
-    href: "http://localhost:8080/auth/start/google",
+    href: `${BASE_API_URL}/auth/google`,
     alt: "continue with Google",
 };
 
 const Login = () => {
     const router = useRouter();
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push("/");
+        }
+    }, [isLoggedIn]);
+
     return (
         <div className="flex flex-col gap-y-[4px] h-full">
             <p className="text-center w-full max-[619px]:text-[16px]  min-[620px]:text-[24px]">

@@ -1,5 +1,15 @@
+"use client";
+import { initAuth } from "@/utils/initAuth";
+import { useEffect } from "react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
+
 const Header = () => {
+    useEffect(() => {
+        initAuth();
+    }, []);
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
     return (
         <header className="flex justify-between items-center w-full min-w-[300px] border-[1px] border-solid border-[#ffffff] rounded-[8px] py-[12px] px-[24px]">
             <Link href={"/"}>
@@ -11,7 +21,9 @@ const Header = () => {
                 </div>
             </Link>
 
-            <Link href={"/login"}>Login</Link>
+            <Link href={isLoggedIn ? "/logout" : "/login"}>
+                {isLoggedIn ? "Logout" : "Login"}
+            </Link>
         </header>
     );
 };

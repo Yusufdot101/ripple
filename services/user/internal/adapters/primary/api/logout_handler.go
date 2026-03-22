@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/Yusufdot101/ribble/services/user/config"
 	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,8 @@ func (h *handler) logout(ctx *gin.Context) {
 		ctx.String(statusCode, err.Error())
 		return
 	}
+
+	ctx.SetCookie("refreshToken", refreshToken, -1, "/", "", config.RefreshTokenIsSecure(), true)
 
 	ctx.String(http.StatusOK, "logged out successfully")
 }
