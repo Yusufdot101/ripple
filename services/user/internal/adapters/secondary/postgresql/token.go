@@ -18,8 +18,6 @@ type Token struct {
 	TokenType   domain.TokenType
 }
 
-// DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error
-
 func (a *Adapter) InsertToken(token *domain.Token) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -55,4 +53,16 @@ func (a *Adapter) GetTokenByStringAndUse(tokenString string, tokenUse domain.Tok
 	}
 	token := domain.NewToken(tokenModel.Use, tokenModel.TokenType, tokenModel.UserID, tokenModel.TokenString, tokenModel.Expires)
 	return token, nil
+}
+
+func (a *Adapter) DeleteTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res := a.DB.WithContext(ctx).Where("token_string = ? AND use = ? AND expires > NOW()", tokenString, tokenUse).Delete(&Token{})
+
+	if res.RowsAffected == 0 {
+		return domain.ErrRecordNotFound
+	}
+	return res.Error
 }
