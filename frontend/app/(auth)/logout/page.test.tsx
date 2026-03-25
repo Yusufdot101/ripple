@@ -3,6 +3,7 @@ import { it, beforeEach, expect, vi } from "vitest";
 import { useAuthStore } from "@/store/useAuthStore";
 import Logout from "./page";
 import { logout } from "@/utils/logout";
+import { ImageProps } from "next/image";
 
 beforeEach(() => {
     useAuthStore.setState({
@@ -25,8 +26,8 @@ vi.mock("@/utils/logout", () => ({
     logout: vi.fn(),
 }));
 
-vi.mock("@/components/Icon", () => ({
-    default: (props: any) => <img {...props} />,
+vi.mock("next/image", () => ({
+    default: (props: ImageProps) => <img alt="text image" {...props} />,
 }));
 
 it("redirects to home if not logged in", () => {

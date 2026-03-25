@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import userEvent from "@testing-library/user-event";
 import Login from "./page";
 import { BASE_API_URL } from "@/utils/api";
+import type { ImageProps } from "next/image";
 
 beforeEach(() => {
     useAuthStore.setState({
@@ -22,8 +23,8 @@ vi.mock("next/navigation", () => ({
     }),
 }));
 
-vi.mock("@/components/Icon", () => ({
-    default: (props: any) => <img {...props} />,
+vi.mock("next/image", () => ({
+    default: (props: ImageProps) => <img alt="text image" {...props} />,
 }));
 
 it("redirects to home if already logged in", () => {

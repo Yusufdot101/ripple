@@ -11,7 +11,7 @@ function Logout() {
         if (!isLoggedIn) {
             router.push("/");
         }
-    }, [isLoggedIn]);
+    }, [isLoggedIn, router]);
 
     useEffect(() => {
         logout();

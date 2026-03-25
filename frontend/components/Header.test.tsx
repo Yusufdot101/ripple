@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { expect, test, vi } from "vitest";
+import { expect, test, beforeEach } from "vitest";
 import Header from "./Header";
 import { useAuthStore } from "@/store/useAuthStore";
-import { beforeEach } from "node:test";
 
 test("renders site name", async () => {
     render(<Header />);
