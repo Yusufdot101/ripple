@@ -10,7 +10,7 @@ import (
 
 func init() {
 	home, _ := os.UserHomeDir()
-	_ = godotenv.Load(fmt.Sprintf("%s/Documents/projects/ribble/shared/middleware/config/.env", home))
+	_ = godotenv.Load(fmt.Sprintf("%s/Documents/projects/ripple/shared/middleware/config/.env", home))
 }
 
 func GetJWTIssuer() string {

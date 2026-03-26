@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/Yusufdot101/ribble/shared/middleware/config"
+	"github.com/Yusufdot101/ripple/shared/middleware/config"
 	"github.com/golang-jwt/jwt/v4"
 )
 

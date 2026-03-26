@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Yusufdot101/ribble/shared/middleware/config"
+	"github.com/Yusufdot101/ripple/shared/middleware/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
