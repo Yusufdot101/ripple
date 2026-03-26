@@ -14,7 +14,7 @@ var CtxUserIDKey = "userID"
 func RequireAuthentication(next gin.HandlerFunc) gin.HandlerFunc {
 	fn := func(ctx *gin.Context) {
 		// read the token(jwt) from the request headers
-		header := ctx.Request.Header.Get("Authentication")
+		header := ctx.Request.Header.Get("Authorization")
 		if len(header) == 0 {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": ErrMissingInvalidToken.Error(),
@@ -22,7 +22,7 @@ func RequireAuthentication(next gin.HandlerFunc) gin.HandlerFunc {
 			return
 		}
 
-		parts := strings.Split(header, ":")
+		parts := strings.SplitN(header, " ", 2)
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": ErrMissingInvalidToken.Error(),
@@ -32,14 +32,20 @@ func RequireAuthentication(next gin.HandlerFunc) gin.HandlerFunc {
 		// validate it
 		token, err := ValidateJWT(parts[1])
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
+			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": ErrInvalidJWT.Error(),
 			})
 			return
 		}
 
 		// exctract the fields from it
-		claims := token.Claims.(jwt.MapClaims)
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"error": ErrInvalidJWT.Error(),
+			})
+			return
+		}
 		issuer, ok := claims["iss"].(string)
 		if !ok || issuer != config.GetJWTIssuer() {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -57,7 +63,7 @@ func RequireAuthentication(next gin.HandlerFunc) gin.HandlerFunc {
 		}
 
 		// add the userID to the request context
-		ctx.Request.Header.Add(CtxUserIDKey, userID)
+		ctx.Set(CtxUserIDKey, userID)
 		next(ctx)
 	}
 	return fn
