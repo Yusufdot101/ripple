@@ -1,10 +1,13 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/Yusufdot101/ripple/shared/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 func (h *handler) RegisterRoutes() *gin.Engine {
 	r := gin.New()
 	group := r.Group("/chat")
-	group.POST("", h.NewChatWithParticipants)
+	group.POST("", middleware.RequireAuthentication(h.NewChatWithParticipants))
 	return r
 }

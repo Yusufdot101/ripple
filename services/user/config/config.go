@@ -11,7 +11,7 @@ import (
 
 func init() {
 	home, _ := os.UserHomeDir()
-	_ = godotenv.Load(fmt.Sprintf("%s/Documents/projects/ribble/services/user/config/.env", home))
+	_ = godotenv.Load(fmt.Sprintf("%s/Documents/projects/ripple/services/user/config/.env", home))
 }
 
 func GetDatabaseURL() string {

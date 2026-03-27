@@ -1,8 +1,15 @@
+"use client";
+import { initAuth } from "@/utils/initAuth";
+import { useEffect } from "react";
 import githubLogo from "./../assets/github.svg";
 import linkedInLogo from "./../assets/linkedIn.svg";
 import Icon from "./Icon";
 
 const Footer = () => {
+    useEffect(() => {
+        initAuth();
+    }, []);
+
     return (
         <div className="bg-primary border-[1px] border-solid border-[#ffffff] rounded-[8px] py-[12px] w-full min-w-[300px] flex items-center justify-center gap-x-[12px] text-text gap-[8px] px-[8px] h-fit">
             <div className="flex gap-[8px] h-[80px]">

@@ -73,7 +73,6 @@ func TestGoogleCallbackHandler(t *testing.T) {
 	h.googleCallback(c)
 
 	cookies := resp.Result().Cookies()
-	log.Println("cookies: ", cookies)
 	for _, c := range cookies {
 		if c.Name == "refreshToken" {
 			return
