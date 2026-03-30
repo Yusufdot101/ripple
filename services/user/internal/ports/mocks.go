@@ -16,8 +16,7 @@ import (
 func NewMockAuthService(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockAuthService {
+}) *MockAuthService {
 	mock := &MockAuthService{}
 	mock.Mock.Test(t)
 
@@ -227,13 +226,78 @@ func (_c *MockAuthService_NewUser_Call) RunAndReturn(run func(user *domain.User)
 	return _c
 }
 
+// VerifyUsers provides a mock function for the type MockAuthService
+func (_mock *MockAuthService) VerifyUsers(ctx context.Context, userIDs []uint32) (bool, error) {
+	ret := _mock.Called(ctx, userIDs)
+
+	if len(ret) == 0 {
+		panic("no return value specified for VerifyUsers")
+	}
+
+	var r0 bool
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) (bool, error)); ok {
+		return returnFunc(ctx, userIDs)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) bool); ok {
+		r0 = returnFunc(ctx, userIDs)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []uint32) error); ok {
+		r1 = returnFunc(ctx, userIDs)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockAuthService_VerifyUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'VerifyUsers'
+type MockAuthService_VerifyUsers_Call struct {
+	*mock.Call
+}
+
+// VerifyUsers is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userIDs []uint32
+func (_e *MockAuthService_Expecter) VerifyUsers(ctx interface{}, userIDs interface{}) *MockAuthService_VerifyUsers_Call {
+	return &MockAuthService_VerifyUsers_Call{Call: _e.mock.On("VerifyUsers", ctx, userIDs)}
+}
+
+func (_c *MockAuthService_VerifyUsers_Call) Run(run func(ctx context.Context, userIDs []uint32)) *MockAuthService_VerifyUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []uint32
+		if args[1] != nil {
+			arg1 = args[1].([]uint32)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockAuthService_VerifyUsers_Call) Return(b bool, err error) *MockAuthService_VerifyUsers_Call {
+	_c.Call.Return(b, err)
+	return _c
+}
+
+func (_c *MockAuthService_VerifyUsers_Call) RunAndReturn(run func(ctx context.Context, userIDs []uint32) (bool, error)) *MockAuthService_VerifyUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockOAuthProvider creates a new instance of MockOAuthProvider. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockOAuthProvider(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockOAuthProvider {
+}) *MockOAuthProvider {
 	mock := &MockOAuthProvider{}
 	mock.Mock.Test(t)
 
@@ -391,8 +455,7 @@ func (_c *MockOAuthProvider_GetUserInfo_Call) RunAndReturn(run func(ctx context.
 func NewMockRepository(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockRepository {
+}) *MockRepository {
 	mock := &MockRepository{}
 	mock.Mock.Test(t)
 
@@ -535,6 +598,74 @@ func (_c *MockRepository_FindUserByProviderAndSub_Call) Return(user *domain.User
 }
 
 func (_c *MockRepository_FindUserByProviderAndSub_Call) RunAndReturn(run func(provider string, sub string) (*domain.User, error)) *MockRepository_FindUserByProviderAndSub_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// FindUsersByID provides a mock function for the type MockRepository
+func (_mock *MockRepository) FindUsersByID(context1 context.Context, uint32s []uint32) ([]*domain.User, error) {
+	ret := _mock.Called(context1, uint32s)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindUsersByID")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) ([]*domain.User, error)); ok {
+		return returnFunc(context1, uint32s)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) []*domain.User); ok {
+		r0 = returnFunc(context1, uint32s)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []uint32) error); ok {
+		r1 = returnFunc(context1, uint32s)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_FindUsersByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindUsersByID'
+type MockRepository_FindUsersByID_Call struct {
+	*mock.Call
+}
+
+// FindUsersByID is a helper method to define mock.On call
+//   - context1 context.Context
+//   - uint32s []uint32
+func (_e *MockRepository_Expecter) FindUsersByID(context1 interface{}, uint32s interface{}) *MockRepository_FindUsersByID_Call {
+	return &MockRepository_FindUsersByID_Call{Call: _e.mock.On("FindUsersByID", context1, uint32s)}
+}
+
+func (_c *MockRepository_FindUsersByID_Call) Run(run func(context1 context.Context, uint32s []uint32)) *MockRepository_FindUsersByID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []uint32
+		if args[1] != nil {
+			arg1 = args[1].([]uint32)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_FindUsersByID_Call) Return(users []*domain.User, err error) *MockRepository_FindUsersByID_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockRepository_FindUsersByID_Call) RunAndReturn(run func(context1 context.Context, uint32s []uint32) ([]*domain.User, error)) *MockRepository_FindUsersByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -714,8 +845,7 @@ func (_c *MockRepository_InsertUser_Call) RunAndReturn(run func(user *domain.Use
 func NewMockTokenService(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockTokenService {
+}) *MockTokenService {
 	mock := &MockTokenService{}
 	mock.Mock.Test(t)
 

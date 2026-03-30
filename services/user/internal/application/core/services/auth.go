@@ -70,3 +70,15 @@ func (asvc *AuthService) BeginAuth() (string, string, string) {
 	url := asvc.provider.GetAuthURL(state, nonce)
 	return url, state, nonce
 }
+
+func (asvc *AuthService) VerifyUsers(ctx context.Context, userIDs []uint32) (bool, error) {
+	users, err := asvc.repo.FindUsersByID(ctx, userIDs)
+	if err != nil {
+		return false, err
+	}
+	if len(userIDs) != len(users) || len(userIDs) == 0 {
+		return false, domain.ErrInvalidID
+	}
+
+	return true, nil
+}
