@@ -65,6 +65,10 @@ func GetJWTSecret() []byte {
 	return []byte(jwtSecret)
 }
 
+func GetEnv() string {
+	return getEnvVariable("ENV")
+}
+
 func getEnvVariable(key string) string {
 	val := os.Getenv(key)
 	if val == "" {
