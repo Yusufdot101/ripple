@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	"github.com/Yusufdot101/ribble/services/chat/config"
-	"github.com/Yusufdot101/ribble/services/chat/internal/adapters/primary/api"
-	"github.com/Yusufdot101/ribble/services/chat/internal/adapters/secondary/postgresql"
-	"github.com/Yusufdot101/ribble/services/chat/internal/application/core/services"
+	"github.com/Yusufdot101/ripple/services/chat/config"
+	"github.com/Yusufdot101/ripple/services/chat/internal/adapters/primary/api"
+	"github.com/Yusufdot101/ripple/services/chat/internal/adapters/secondary/postgresql"
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/services"
 )
 
 func main() {

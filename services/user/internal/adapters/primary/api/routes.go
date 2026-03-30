@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

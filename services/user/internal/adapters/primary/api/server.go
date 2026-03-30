@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Yusufdot101/ribble/services/user/internal/ports"
+	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 	"github.com/gin-gonic/gin"
 )
 

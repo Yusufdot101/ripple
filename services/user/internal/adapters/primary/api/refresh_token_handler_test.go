@@ -5,9 +5,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/services"
-	"github.com/Yusufdot101/ribble/services/user/internal/ports"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/services"
+	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )

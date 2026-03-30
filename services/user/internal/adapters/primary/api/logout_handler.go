@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
 	"github.com/gin-gonic/gin"
 )
 

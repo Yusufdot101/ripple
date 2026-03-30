@@ -7,7 +7,7 @@ package ports
 import (
 	"context"
 
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -16,7 +16,8 @@ import (
 func NewMockAuthService(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockAuthService {
+},
+) *MockAuthService {
 	mock := &MockAuthService{}
 	mock.Mock.Test(t)
 
@@ -231,7 +232,8 @@ func (_c *MockAuthService_NewUser_Call) RunAndReturn(run func(user *domain.User)
 func NewMockOAuthProvider(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockOAuthProvider {
+},
+) *MockOAuthProvider {
 	mock := &MockOAuthProvider{}
 	mock.Mock.Test(t)
 
@@ -389,7 +391,8 @@ func (_c *MockOAuthProvider_GetUserInfo_Call) RunAndReturn(run func(ctx context.
 func NewMockRepository(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockRepository {
+},
+) *MockRepository {
 	mock := &MockRepository{}
 	mock.Mock.Test(t)
 
@@ -711,7 +714,8 @@ func (_c *MockRepository_InsertUser_Call) RunAndReturn(run func(user *domain.Use
 func NewMockTokenService(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockTokenService {
+},
+) *MockTokenService {
 	mock := &MockTokenService{}
 	mock.Mock.Test(t)
 

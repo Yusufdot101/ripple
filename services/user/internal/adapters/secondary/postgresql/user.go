@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
 	"gorm.io/gorm"
 )
 

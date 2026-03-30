@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
-	"github.com/Yusufdot101/ribble/services/user/internal/ports"
+	"github.com/Yusufdot101/ripple/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 )

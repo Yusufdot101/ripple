@@ -1,23 +1,40 @@
 package services
 
 import (
-	"github.com/Yusufdot101/ribble/services/chat/internal/application/core/domain"
-	"github.com/Yusufdot101/ribble/services/chat/internal/ports"
+	"context"
+	"time"
+
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/chat/internal/ports"
 )
 
 type ChatService struct {
-	repo ports.Repository
+	repo         ports.Repository
+	userVerifier ports.UserVerifier
 }
 
-func NewChatService(repo ports.Repository) *ChatService {
+func NewChatService(repo ports.Repository, userVerifier ports.UserVerifier) *ChatService {
 	return &ChatService{
-		repo: repo,
+		repo:         repo,
+		userVerifier: userVerifier,
 	}
 }
 
 func (csvc *ChatService) NewChatWithParticipants(userIDs []uint) (uint, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// verify the users actually exist
+	valid, err := csvc.userVerifier.VerifyUsers(ctx, userIDs)
+	if err != nil {
+		return 0, err
+	}
+	if !valid {
+		return 0, domain.ErrInvalidUserIDs
+	}
+
 	chatID := uint(0)
-	err := csvc.repo.WithTx(func(repo ports.Repository) error {
+	err = csvc.repo.WithTx(func(repo ports.Repository) error {
 		chat := domain.NewChat()
 		err := repo.InsertChat(chat)
 		if err != nil {

@@ -3,8 +3,8 @@ package google
 import (
 	"context"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Yusufdot101/ribble/services/chat/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
 	"gorm.io/gorm"
 )
 

@@ -22,6 +22,6 @@ require-template-schema-exists: true
 template: testify
 template-schema: "{{.Template}}.schema.json"
 packages:
-    github.com/Yusufdot101/ribble/services/user/internal/ports:
+    github.com/Yusufdot101/ripple/services/user/internal/ports:
         config:
             all: true

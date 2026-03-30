@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
-	"github.com/Yusufdot101/ribble/services/user/internal/ports"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 )
 
 type AuthService struct {

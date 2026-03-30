@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Ribble",
+    title: "Ripple",
     description: "A site to chat",
 };
 

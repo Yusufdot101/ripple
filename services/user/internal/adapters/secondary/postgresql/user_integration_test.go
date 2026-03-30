@@ -1,7 +1,7 @@
 package postgresql
 
 import (
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/domain"
 )
 
 func (rts *RepositoryTestSuite) TestInsertUser() {

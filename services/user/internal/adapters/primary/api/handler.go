@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
-	"github.com/Yusufdot101/ribble/services/user/internal/ports"
+	"github.com/Yusufdot101/ripple/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 	"github.com/gin-gonic/gin"
 )
 

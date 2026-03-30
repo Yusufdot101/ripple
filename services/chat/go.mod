@@ -1,4 +1,4 @@
-module github.com/Yusufdot101/ribble/services/chat
+module github.com/Yusufdot101/ripple/services/chat
 
 go 1.26.1
 

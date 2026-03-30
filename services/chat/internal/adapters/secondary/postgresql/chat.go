@@ -1,8 +1,8 @@
 package postgresql
 
 import (
-	"github.com/Yusufdot101/ribble/services/chat/internal/application/core/domain"
-	"github.com/Yusufdot101/ribble/services/chat/internal/ports"
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+	"github.com/Yusufdot101/ripple/services/chat/internal/ports"
 	"gorm.io/gorm"
 )
 

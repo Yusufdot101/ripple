@@ -5,11 +5,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/Yusufdot101/ribble/services/user/config"
-	"github.com/Yusufdot101/ribble/services/user/internal/adapters/primary/api"
-	"github.com/Yusufdot101/ribble/services/user/internal/adapters/secondary/google"
-	"github.com/Yusufdot101/ribble/services/user/internal/adapters/secondary/postgresql"
-	"github.com/Yusufdot101/ribble/services/user/internal/application/core/services"
+	"github.com/Yusufdot101/ripple/services/user/config"
+	"github.com/Yusufdot101/ripple/services/user/internal/adapters/primary/api"
+	"github.com/Yusufdot101/ripple/services/user/internal/adapters/secondary/google"
+	"github.com/Yusufdot101/ripple/services/user/internal/adapters/secondary/postgresql"
+	"github.com/Yusufdot101/ripple/services/user/internal/application/core/services"
 )
 
 func main() {
