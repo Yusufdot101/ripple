@@ -1,10 +1,18 @@
-.PHONY:build
-build:
-	@go build -o tmp/main ./cmd/api
+.PHONY:build-api
+build-api:
+	@go build -o tmp/api ./cmd/api
 
-.PHONY:run
-run:
-	@./tmp/main
+.PHONY:build-grpc
+build-grpc:
+	@go build -o tmp/grpc ./cmd/grpc
+
+.PHONY:run-api
+run-api:
+	@./tmp/api
+
+.PHONY:run-grpc
+run-grpc:
+	@./tmp/grpc
 
 .PHONY:run-dev
 run-dev:

@@ -10,4 +10,5 @@ type AuthService interface {
 	NewUser(user *domain.User) error
 	BeginAuth() (authURL, state, nonce string)
 	HandleCallback(ctx context.Context, code, nonce string) (refreshToken, accessToken string, err error)
+	VerifyUsers(ctx context.Context, userIDs []uint32) (bool, error)
 }

@@ -12,4 +12,6 @@ var (
 	ErrInvalidTokeType         = errors.New("invalid token type")
 	ErrInvalidJWT              = errors.New("unexpected signing method")
 	ErrInvalidJWTSigningMethod = errors.New("unexpected signing method")
+
+	ErrInvalidID = errors.New("invalid record id")
 )
