@@ -13,5 +13,6 @@ var (
 	ErrInvalidJWT              = errors.New("unexpected signing method")
 	ErrInvalidJWTSigningMethod = errors.New("unexpected signing method")
 
-	ErrInvalidID = errors.New("invalid record id")
+	ErrInvalidID    = errors.New("invalid id")
+	ErrInvalidEmail = errors.New("invalid email")
 )
