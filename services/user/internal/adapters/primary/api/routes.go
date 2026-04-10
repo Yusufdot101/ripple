@@ -10,19 +10,20 @@ import (
 
 func (h *handler) RegisterRoutes() *gin.Engine {
 	r := gin.New()
-	group := r.Group("/auth")
-	group.Use(cors.New(cors.Config{
+	r.Use(cors.New(cors.Config{
 		AllowCredentials: true,
 		AllowOrigins:     []string{config.GetFrontendURL()},
-		AllowMethods:     []string{http.MethodGet, http.MethodPost},
-		AllowHeaders:     []string{"Content-Type"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodOptions},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
 	}))
+
+	group := r.Group("/auth")
 	group.GET("/google", h.googleBegin)
 	group.GET("/google/callback", h.googleCallback)
 	group.GET("/refreshtoken", h.RefreshToken)
 	group.Match([]string{http.MethodPost, http.MethodOptions}, "/logout", h.logout)
 
-	userGroup := r.Group("/user")
+	userGroup := r.Group("/users")
 	userGroup.GET("", h.getUsersByEmail)
 	return r
 }

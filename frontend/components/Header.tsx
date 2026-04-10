@@ -6,7 +6,7 @@ const Header = () => {
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
     return (
-        <header className="flex justify-between items-center w-full min-w-[300px] py-[12px] px-[24px]">
+        <header className="flex justify-between items-center w-full min-w-[300px]">
             <Link href={"/"}>
                 <div className="flex items-center gap-[12px] cursor-pointer">
                     {/* TODO: Add logo */}
