@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
@@ -38,8 +39,11 @@ func (a *Adapter) GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, 
 		Group("chat_id").
 		Having("Count(DISTINCT user_id) = ?", len(participantIDs))
 
-	res := db.WithContext(ctx).Where("id IN (?)", subQuery).Find(&chatModel)
+	res := db.WithContext(ctx).Where("id IN (?)", subQuery).First(&chatModel)
 	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrRecordNotFound
+		}
 		return nil, res.Error
 	}
 
