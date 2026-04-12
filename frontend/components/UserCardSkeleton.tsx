@@ -20,10 +20,12 @@ const UserCardSkeleton = ({ index }: Props) => {
             className={`${index === 0 ? "" : "border-t-[1px]"} border-foreground p-[4px] pointer-events-none duration-300 flex flex-col gap-y-[4px] h-[64px] duration-300`}
         >
             <div
+                suppressHydrationWarning
                 style={{ width: `${nameSize}%` }}
                 className="h-full bg-foreground/75"
             ></div>
             <div
+                suppressHydrationWarning
                 style={{ width: `${emailSize}%` }}
                 className="h-full bg-foreground/75"
             ></div>
