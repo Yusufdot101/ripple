@@ -40,3 +40,39 @@ func (h *handler) NewChatWithParticipants(ctx *gin.Context) {
 		"chatID": chatID,
 	})
 }
+
+var GetChatRequest struct {
+	UserIDs []uint `json:"userIDs"`
+}
+
+func (h *handler) GetByUserIDs(ctx *gin.Context) {
+	if err := ctx.ShouldBind(&GetChatRequest); err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	currentUserID, ok := ctx.MustGet("userID").(string)
+	if !ok {
+		panic("user id missing")
+	}
+	currentUserIDint, err := strconv.Atoi(currentUserID)
+	if err != nil {
+		panic("invalid user id type")
+	}
+
+	GetChatRequest.UserIDs = append(GetChatRequest.UserIDs, uint(currentUserIDint))
+	if len(GetChatRequest.UserIDs) < 2 {
+		ctx.String(http.StatusBadRequest, "userIDs cannot be less than 2")
+		return
+	}
+
+	chat, err := h.csvc.GetChatByUserIDs(GetChatRequest.UserIDs)
+	if err != nil {
+		status := http.StatusInternalServerError
+		ctx.JSON(status, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"chat": chat,
+	})
+}
