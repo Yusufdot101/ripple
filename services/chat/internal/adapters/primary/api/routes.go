@@ -1,13 +1,23 @@
 package api
 
 import (
+	"net/http"
+
+	"github.com/Yusufdot101/ripple/services/chat/config"
 	"github.com/Yusufdot101/ripple/shared/middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *handler) RegisterRoutes() *gin.Engine {
 	r := gin.New()
-	group := r.Group("/chat")
+	r.Use(cors.New(cors.Config{
+		AllowCredentials: true,
+		AllowOrigins:     []string{config.GetFrontendURL()},
+		AllowMethods:     []string{http.MethodPost, http.MethodOptions},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+	}))
+	group := r.Group("/chats")
 	group.POST("", middleware.RequireAuthentication(h.NewChatWithParticipants))
 	group.POST("/find", middleware.RequireAuthentication(h.GetByUserIDs))
 	return r

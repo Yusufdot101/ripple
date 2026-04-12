@@ -1,10 +1,12 @@
 package api
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
 	"github.com/gin-gonic/gin"
 )
 
@@ -66,9 +68,15 @@ func (h *handler) GetByUserIDs(ctx *gin.Context) {
 	}
 
 	chat, err := h.csvc.GetChatByUserIDs(GetChatRequest.UserIDs)
+	log.Println("here: ", err)
 	if err != nil {
 		status := http.StatusInternalServerError
-		ctx.JSON(status, gin.H{"error": err.Error()})
+		if errors.Is(err, domain.ErrRecordNotFound) {
+			status = http.StatusNotFound
+		}
+		ctx.JSON(status, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 

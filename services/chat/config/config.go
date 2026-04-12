@@ -30,6 +30,10 @@ func GetJWTSecret() []byte {
 	return []byte(jwtSecret)
 }
 
+func GetFrontendURL() string {
+	return getEnvVariable("FRONTEND_URL")
+}
+
 func getEnvVariable(key string) string {
 	val := os.Getenv(key)
 	if val == "" {
