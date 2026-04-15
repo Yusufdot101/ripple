@@ -35,7 +35,6 @@ export default function RootLayout({
             >
                 <Header />
                 <div className="flex-1 flex flex-col">{children}</div>
-                <Footer />
             </body>
         </html>
     );
