@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -31,11 +30,10 @@ export default function RootLayout({
         >
             <body
                 suppressHydrationWarning
-                className="min-h-full flex flex-col px-[24px] py-[16px] gap-y-[12px]"
+                className="min-h-screen flex flex-col px-[24px] py-[16px] gap-y-[12px]"
             >
                 <Header />
-                <div className="flex-1">{children}</div>
-                {/* <Footer /> */}
+                <div className="flex-1 flex flex-col">{children}</div>
             </body>
         </html>
     );
