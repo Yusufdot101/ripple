@@ -4,6 +4,13 @@ interface ChatType {
     ID: number;
 }
 
+export interface MessageType {
+    ID: number;
+    ChatID: number;
+    SenderID: number;
+    Content: string;
+}
+
 export const getChatByUserIDs = async (
     userIDs: number[],
 ): Promise<ChatType | undefined> => {
