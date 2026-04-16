@@ -8,6 +8,9 @@ type ChatService interface {
 	GetChatParticipants(chatID uint) ([]*domain.ChatParticipant, error)
 =======
 	GetChatByUserIDs(userIDs []uint) (*domain.Chat, error)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 	NewMessage(userID, chatID uint, content string) error
 }
