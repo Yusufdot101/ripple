@@ -3,16 +3,12 @@ package api
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Yusufdot101/ripple/shared/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
-
-var NewMessageRequest struct {
-	ChatID  uint   `json:"chatID"`
-	Content string `json:"string"`
-}
 
 func (h *handler) newMessage(ctx *gin.Context) {
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
@@ -26,9 +22,15 @@ func (h *handler) newMessage(ctx *gin.Context) {
 		Token string `json:"token"`
 	}
 
+	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
 	if err := conn.ReadJSON(&authMsg); err != nil {
 		return
 	}
+	conn.SetReadDeadline(time.Time{}) // clear, or extend via pong handler
+	conn.SetPongHandler(func(string) error {
+		conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		return nil
+	})
 
 	// validate the token
 	token, err := middleware.ValidateJWT(authMsg.Token)
@@ -75,7 +77,10 @@ func (h *handler) newMessage(ctx *gin.Context) {
 		}
 
 		if msg.ChatID == 0 || strings.TrimSpace(msg.Content) == "" {
-			wsError(conn, "invalid message")
+			conn.WriteJSON(map[string]string{
+				"type":    "error",
+				"message": "invalid message",
+			})
 			continue
 		} else {
 			participants, err := h.csvc.GetChatParticipants(msg.ChatID)
@@ -90,7 +95,7 @@ func (h *handler) newMessage(ctx *gin.Context) {
 			// make sure the user is in the chat
 			userInChat := false
 			for _, p := range participants {
-				if p.ID == uint(userIDint) {
+				if p.UserID == uint(userIDint) {
 					userInChat = true
 					break
 				}
@@ -103,7 +108,7 @@ func (h *handler) newMessage(ctx *gin.Context) {
 			if err != nil {
 				conn.WriteJSON(map[string]string{
 					"type":    "error",
-					"message": "chat not found",
+					"message": "failed to send message",
 				})
 				continue
 			}
