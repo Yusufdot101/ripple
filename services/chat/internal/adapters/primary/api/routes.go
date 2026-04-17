@@ -22,6 +22,6 @@ func (h *handler) RegisterRoutes() *gin.Engine {
 	group.POST("/find", middleware.RequireAuthentication(h.GetByUserIDs))
 
 	messageGroup := r.Group("/messages")
-	messageGroup.GET("", h.newMessage)
+	messageGroup.GET("/new", h.newMessage)
 	return r
 }
