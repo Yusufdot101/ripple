@@ -1,13 +1,7 @@
 "use client";
 import { useAuthStore } from "@/store/useAuthStore";
 import { deleteMessage, MessageType } from "@/utils/messages";
-import {
-    flip,
-    FloatingPortal,
-    offset,
-    shift,
-    useFloating,
-} from "@floating-ui/react";
+import { flip, offset, shift, useFloating } from "@floating-ui/react";
 
 interface Props {
     message: MessageType;
@@ -74,7 +68,7 @@ const Message = ({
 
             {menuIsOpen && selectedMessageID === message.ID && (
                 <div
-                    ref={refs.setFloating}
+                    ref={refs.setFloating ?? undefined}
                     style={{
                         ...floatingStyles,
                     }}
