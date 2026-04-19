@@ -41,9 +41,6 @@ const Message = ({
         deleteMessage(message.ID);
     };
 
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
     return (
         <div
             tabIndex={0}
@@ -54,7 +51,9 @@ const Message = ({
 
                 if (message.SenderID !== userID) return;
                 handleRightClick(message.ID);
-                e.preventDefault();
+
+                const rect = containerRef.current?.getBoundingClientRect();
+                if (!rect) return;
 
                 refs.setPositionReference({
                     getBoundingClientRect() {
