@@ -2,19 +2,18 @@
 import Image from "next/image";
 import searchIcon from "../assets/searchIcon.svg";
 import { useState } from "react";
-// import { getUsersByEmail, UserType } from "@/utils/users";
 
-const SearchBar = () => {
+interface Props {
+    handleEnter: (email: string) => void;
+}
+
+const SearchBar = ({ handleEnter }: Props) => {
     const [email, setEmail] = useState("");
-    // const [users, setUsers] = useState<UserType[]>([]);
-    const handleEnter = async () => {
-        // const users = await getUsersByEmail(email);
-    };
     return (
         <div
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    handleEnter();
+                    handleEnter(email);
                 }
             }}
             className="shrink-0 border-[1px] border-solid border-[#ffffff] rounded-[8px] py-[12px] px-[12px] flex gap-x-[4px] h-[50px] cursor-pointer opacity-80"

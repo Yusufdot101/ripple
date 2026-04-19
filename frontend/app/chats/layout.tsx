@@ -1,6 +1,4 @@
 import Contacts from "@/components/Contacts";
-import SearchBar from "@/components/SearchBar";
-
 export default function ChatsLayout({
     children,
 }: Readonly<{
@@ -8,8 +6,6 @@ export default function ChatsLayout({
 }>) {
     return (
         <div className="flex flex-col gap-y-[8px] flex-1 min-h-0">
-            <SearchBar />
-
             <div className="gap-x-[8px] flex-1 flex min-h-0">
                 {/* Sidebar */}
                 {/* Hide in mobile */}

@@ -6,6 +6,7 @@ import { getChatByUserIDs } from "@/utils/chats";
 import { getUsersByEmail, UserType } from "@/utils/users";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import SearchBar from "./SearchBar";
 
 const Contacts = () => {
     const [users, setUsers] = useState<UserType[]>([]);
@@ -31,7 +32,16 @@ const Contacts = () => {
 
     const loggedInUserID = useAuthStore((state) => state.userID);
     return (
-        <div className="flex-1 flex flex-col gap-y-[8px] rounded-[4px] ">
+        <div className="flex-1 flex flex-col gap-y-[8px] rounded-[4px] gap-y-[8px]">
+            <SearchBar
+                handleEnter={async (email: string) => {
+                    setUsers([]);
+                    setIsLoading(true);
+                    const users = await getUsersByEmail(email);
+                    setUsers(users);
+                    setIsLoading(false);
+                }}
+            />
             <div
                 className={`${!isLoading ? "hidden" : ""} flex flex-col transition-all duration-300`}
             >
@@ -40,23 +50,24 @@ const Contacts = () => {
                 ))}
             </div>
 
-            {users.length === 0 && !isLoading && (
+            {!users || (users?.length === 0 && !isLoading) ? (
                 <p className="w-full text-center">No users</p>
-            )}
+            ) : null}
 
             <div
-                className={`${users.length === 0 ? "opacity-0 blur-sm" : ""} flex flex-col transition-all duration-300`}
+                className={`${users?.length === 0 ? "opacity-0 blur-sm" : ""} flex flex-col transition-all duration-300`}
             >
-                {users
-                    .filter((elem) => elem.id != loggedInUserID)
-                    .map((user) => (
-                        <UserCard
-                            activeUserID={activeUser || -100}
-                            key={user.id}
-                            user={user}
-                            handleClick={handleClick}
-                        />
-                    ))}
+                {users &&
+                    users
+                        .filter((elem) => elem.id != loggedInUserID)
+                        .map((user) => (
+                            <UserCard
+                                activeUserID={activeUser || -100}
+                                key={user.id}
+                                user={user}
+                                handleClick={handleClick}
+                            />
+                        ))}
             </div>
         </div>
     );
