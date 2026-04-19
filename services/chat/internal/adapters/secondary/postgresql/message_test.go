@@ -49,11 +49,12 @@ func (rts *RepositoryTestSuite) TestDeleteMessage() {
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
-	message := domain.NewMessage(chat.ID, 1, "test message")
+	var userID uint = 1
+	message := domain.NewMessage(chat.ID, userID, "test message")
 	err = adapater.InsertMessage(message)
 	rts.Require().Nil(err)
 
-	err = adapater.DeleteMessage(message.ID)
+	err = adapater.DeleteMessage(userID, message.ID)
 	rts.Require().Nil(err)
 
 	messages, err := adapater.GetMessages(chat.ID)
