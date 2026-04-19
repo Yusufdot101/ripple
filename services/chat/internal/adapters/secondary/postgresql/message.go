@@ -60,14 +60,3 @@ func (a *Adapter) GetMessages(chatID uint) ([]*domain.Message, error) {
 
 	return messages, nil
 }
-
-func (a *Adapter) DeleteMessage(messageID uint) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	messageModel := &Message{
-		ChatID: messageID,
-	}
-	res := a.db.WithContext(ctx).Where("chat_id = ?", messageID).Delete(messageModel)
-	return res.Error
-}
