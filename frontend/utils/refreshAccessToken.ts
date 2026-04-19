@@ -3,10 +3,12 @@ import { BASE_USER_SERVICE_API_URL } from "./api";
 import { decodeJWT } from "./userIdFromJWT";
 
 export async function refreshAccessToken() {
-    const res = await fetch(`${BASE_USER_SERVICE_API_URL}/auth/refreshtoken`, {
-        method: "PUT",
-        credentials: "include", // important! sends cookie
-    });
+    const res = await fetch(
+        `http://${BASE_USER_SERVICE_API_URL}/auth/refreshtoken`,
+        {
+            credentials: "include",
+        },
+    );
 
     if (!res.ok) {
         console.error(
@@ -16,7 +18,7 @@ export async function refreshAccessToken() {
     }
 
     const data = await res.json();
-    const token = data.access_token;
+    const token = data.accessToken;
     const { payload } = decodeJWT(token ?? "");
 
     if (!payload || !payload.sub) {

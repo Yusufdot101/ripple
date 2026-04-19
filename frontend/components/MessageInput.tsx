@@ -1,25 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { ParamValue } from "next/dist/server/request/params";
+import { InputEvent, RefObject, useRef, useState } from "react";
 
-const MessageInput = () => {
+interface Props {
+    socketRef: RefObject<WebSocket | null>;
+    chatID: ParamValue;
+}
+
+const MessageInput = ({ socketRef, chatID }: Props) => {
     const [message, setMessage] = useState("");
+
+    const sendMessage = () => {
+        if (!chatID) return;
+        socketRef.current?.send(
+            JSON.stringify({
+                type: "message",
+                chatID: +chatID,
+                content: message,
+            }),
+        );
+        setMessage("");
+    };
+
     return (
         <div className="flex w-full mt-auto relative">
-            <input
-                type="text"
+            <textarea
                 placeholder="Type a message here..."
-                className="bg-foreground w-full text-background outline-none border-none p-[4px] rounded-[4px]"
+                className="bg-foreground w-full text-background outline-none border-none p-2 rounded-[4px] min-h-[32px] max-h-[128px] resize-none overflow-hidden leading-tight"
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onInput={(e) => {
+                    const el = e.currentTarget;
+
+                    el.style.height = "auto";
+                    el.style.height = Math.min(el.scrollHeight, 128) + "px";
+                }}
+                onChange={(e) => {
+                    e;
+                    setMessage(e.target.value);
+                }}
             />
             <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg"
-                className={`${message.trim() === "" ? "opacity-0 z-[-1]" : ""} transition-all duration-300 text-accent absolute right-0 top-0 h-full cursor-pointer`}
+                className={`${message.trim() === "" ? "opacity-0 z-[-1]" : ""} transition-all duration-300 text-accent absolute right-0 top-0 h-full max-h-[32px] cursor-pointer`}
                 role="button"
                 aria-disabled={message === ""}
+                onClick={() => {
+                    sendMessage();
+                }}
             >
                 <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                 <g

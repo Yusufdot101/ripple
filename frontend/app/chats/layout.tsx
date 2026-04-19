@@ -7,10 +7,10 @@ export default function ChatsLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-col gap-y-[8px] flex-1 h-full">
+        <div className="flex flex-col gap-y-[8px] flex-1 min-h-0">
             <SearchBar />
 
-            <div className="gap-x-[8px] flex-1 flex">
+            <div className="gap-x-[8px] flex-1 flex min-h-0">
                 {/* Sidebar */}
                 {/* Hide in mobile */}
                 <div className="w-[40%] max-[900px]:hidden nlex border-r-1 border-red">
@@ -18,7 +18,7 @@ export default function ChatsLayout({
                 </div>
 
                 {/* Main content */}
-                <div className="flex-1">{children}</div>
+                <div className="flex-1 min-h-0 flex flex-col">{children}</div>
             </div>
         </div>
     );

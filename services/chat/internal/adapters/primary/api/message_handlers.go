@@ -106,7 +106,7 @@ func (h *handler) newMessage(ctx *gin.Context) {
 				break
 			}
 
-			err = h.csvc.NewMessage(uint(userIDint), msg.ChatID, msg.Content)
+			message, err := h.csvc.NewMessage(uint(userIDint), msg.ChatID, msg.Content)
 			if err != nil {
 				conn.WriteJSON(map[string]string{
 					"type":    "error",
@@ -116,7 +116,7 @@ func (h *handler) newMessage(ctx *gin.Context) {
 			}
 
 			for _, p := range participants {
-				h.hub.SendToUser(p.UserID, msg)
+				h.hub.SendToUser(p.UserID, message)
 			}
 		}
 	}

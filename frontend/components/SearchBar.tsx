@@ -17,7 +17,7 @@ const SearchBar = () => {
                     handleEnter();
                 }
             }}
-            className="border-[1px] border-solid border-[#ffffff] rounded-[8px] py-[12px] px-[12px] flex gap-x-[4px] h-[50px] cursor-pointer opacity-80"
+            className="shrink-0 border-[1px] border-solid border-[#ffffff] rounded-[8px] py-[12px] px-[12px] flex gap-x-[4px] h-[50px] cursor-pointer opacity-80"
         >
             <Image
                 role="button"

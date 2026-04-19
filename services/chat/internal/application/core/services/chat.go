@@ -65,9 +65,9 @@ func (csvc *ChatService) GetChatParticipants(chatID uint) ([]*domain.ChatPartici
 	return csvc.repo.GetChatUsers(chatID)
 }
 
-func (csvc *ChatService) NewMessage(userID, chatID uint, content string) error {
+func (csvc *ChatService) NewMessage(userID, chatID uint, content string) (*domain.Message, error) {
 	message := domain.NewMessage(chatID, userID, content)
-	return csvc.repo.InsertMessage(message)
+	return message, csvc.repo.InsertMessage(message)
 }
 
 func (csvc *ChatService) GetMessages(chatID uint) ([]*domain.Message, error) {

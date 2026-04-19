@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { api, BASE_USER_SERVICE_API_URL } from "./api";
 
 export type UserType = {
     id: number;
@@ -11,7 +11,9 @@ export type UserType = {
 
 export const getUsersByEmail = async (email: string): Promise<UserType[]> => {
     try {
-        const res = await api(`/users?email=${email}`);
+        const res = await api(
+            `${BASE_USER_SERVICE_API_URL}/users?email=${email}`,
+        );
         if (!res) {
             return [];
         }
