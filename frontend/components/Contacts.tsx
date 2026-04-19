@@ -31,6 +31,10 @@ const Contacts = () => {
     };
 
     const loggedInUserID = useAuthStore((state) => state.userID);
+    const visibleUsers = (users ?? []).filter(
+        (elem) => elem.id !== loggedInUserID,
+    );
+
     return (
         <div className="flex-1 flex flex-col gap-y-[8px] rounded-[4px] gap-y-[8px]">
             <SearchBar
@@ -50,24 +54,21 @@ const Contacts = () => {
                 ))}
             </div>
 
-            {!users || (users?.length === 0 && !isLoading) ? (
+            {visibleUsers.length === 0 && !isLoading ? (
                 <p className="w-full text-center">No users</p>
             ) : null}
 
             <div
-                className={`${users?.length === 0 ? "opacity-0 blur-sm" : ""} flex flex-col transition-all duration-300`}
+                className={`${visibleUsers?.length === 0 ? "opacity-0 blur-sm" : ""} flex flex-col transition-all duration-300`}
             >
-                {users &&
-                    users
-                        .filter((elem) => elem.id != loggedInUserID)
-                        .map((user) => (
-                            <UserCard
-                                activeUserID={activeUser || -100}
-                                key={user.id}
-                                user={user}
-                                handleClick={handleClick}
-                            />
-                        ))}
+                {visibleUsers.map((user) => (
+                    <UserCard
+                        activeUserID={activeUser || -100}
+                        key={user.id}
+                        user={user}
+                        handleClick={handleClick}
+                    />
+                ))}
             </div>
         </div>
     );
