@@ -46,6 +46,14 @@ const ChatPage = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            if (data.type === "messageDeleted") {
+                setMessages((prev) => {
+                    return prev.filter((msg) => {
+                        return msg.ID !== data.messageID;
+                    });
+                });
+                return;
+            }
             console.log("received: ", data);
             if (data.type === "error") {
                 console.error(data.message);
@@ -71,13 +79,28 @@ const ChatPage = () => {
         };
     }, [accessToken, chatID]);
 
+    const [menuIsOpen, setMenuIsOpen] = useState(false);
+    const [selectedMessageID, setSelectedMessageID] = useState<number>();
+
     return (
-        <div className="flex-1 min-h-0 flex flex-col gap-y-[8px]">
+        <div
+            className="flex-1 min-h-0 flex flex-col gap-y-[8px]"
+            onClick={() => setMenuIsOpen(false)}
+        >
             <div className="flex justify-center shrink-0">Username/email</div>
 
             <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-y-[8px] p-[4px]">
                 {messages?.map((message) => (
-                    <Message key={message.ID} message={message} />
+                    <Message
+                        menuIsOpen={menuIsOpen}
+                        selectedMessageID={selectedMessageID ?? -1}
+                        handleRightClick={(messageID: number) => {
+                            setMenuIsOpen(true);
+                            setSelectedMessageID(messageID);
+                        }}
+                        key={message.ID}
+                        message={message}
+                    />
                 ))}
             </div>
 

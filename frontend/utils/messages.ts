@@ -1,5 +1,7 @@
 import { api, BASE_CHAT_SERVICE_API_URL } from "./api";
 
+const baseURL = `${BASE_CHAT_SERVICE_API_URL}/messages`;
+
 export interface MessageType {
     ID: number;
     ChatID: number;
@@ -12,7 +14,7 @@ export const getChatMessages = async (
     chatID: number,
 ): Promise<MessageType[]> => {
     try {
-        const res = await api(`${BASE_CHAT_SERVICE_API_URL}/messages`, {
+        const res = await api(baseURL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,5 +32,15 @@ export const getChatMessages = async (
     } catch (error) {
         console.error(error);
         return [];
+    }
+};
+
+export const deleteMessage = async (messageID: number) => {
+    try {
+        await api(`${baseURL}/${messageID}`, {
+            method: "DELETE",
+        });
+    } catch (error) {
+        console.error(error);
     }
 };
