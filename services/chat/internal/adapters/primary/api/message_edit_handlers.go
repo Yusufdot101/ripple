@@ -67,8 +67,8 @@ func (h *handler) editMessage(ctx *gin.Context) {
 	// broadcast to all the connections
 	participants, err := h.csvc.GetChatParticipants(message.ChatID)
 	if err != nil {
-		// deletion succeeded; log and continue without broadcast
-		log.Printf("deleteMessage: get participants for chat %d failed: %v", message.ChatID, err)
+		// edit succeeded; log and continue without broadcast
+		log.Printf("editMessage: get participants for chat %d failed: %v", message.ChatID, err)
 		return
 	}
 

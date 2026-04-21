@@ -66,6 +66,15 @@ const Message = ({
     const diff = currentDate.getTime() - createdDate.getTime();
     const ONE_HOUR = 60 * 60 * 1000;
     const createdlessThanHourAgo = diff < ONE_HOUR;
+
+    const handleSubmitEdit = async () => {
+        if (!createdlessThanHourAgo || newContent.trim() === "") return;
+
+        const success = await editMessage(message.ID, newContent);
+        if (!success) return;
+        handleCancelMessageEdit();
+    };
+
     return (
         <div
             className={`${isEditingCurrentMessage ? "w-full" : ""} ${message.SenderID === userID ? "ml-auto" : "mr-auto"} flex flex-col rounded-[4px]`}
@@ -147,12 +156,6 @@ const Message = ({
                         >
                             Delete
                         </button>
-
-                        {new Date(message.CreatedAt) -
-                            new Date(message.CreatedAt) <
-                        60 * 60 * 60
-                            ? ""
-                            : ""}
                         {createdlessThanHourAgo ? (
                             <button
                                 aria-label="edit message"
@@ -186,9 +189,7 @@ const Message = ({
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault(); // prevents newline
-                                handleCancelMessageEdit();
-                                if (!createdlessThanHourAgo) return;
-                                editMessage(message.ID, newContent);
+                                handleSubmitEdit();
                             }
                         }}
                     />
@@ -205,9 +206,7 @@ const Message = ({
                             aria-label="send edited message"
                             className="hover:bg-accent hover:text-foreground cursor-pointer duration-300 rounded-[2px] p-[4px]"
                             onClick={() => {
-                                handleCancelMessageEdit();
-                                if (!createdlessThanHourAgo) return;
-                                editMessage(message.ID, newContent);
+                                handleSubmitEdit();
                             }}
                         >
                             Send

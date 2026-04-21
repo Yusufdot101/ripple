@@ -54,7 +54,10 @@ export const deleteMessage = async (messageID: number) => {
     }
 };
 
-export const editMessage = async (messageID: number, newContent: string) => {
+export const editMessage = async (
+    messageID: number,
+    newContent: string,
+): Promise<boolean | undefined> => {
     try {
         const res = await api(`${baseURL}/${messageID}`, {
             method: "PATCH",
