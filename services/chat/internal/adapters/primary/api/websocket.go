@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"sync"
 
@@ -9,11 +10,19 @@ import (
 )
 
 func wsError(conn *websocket.Conn, msg string) {
-	conn.WriteJSON(map[string]string{
+	err := conn.WriteJSON(map[string]string{
 		"type":    "error",
 		"message": msg,
 	})
-	conn.Close()
+	if err != nil {
+		log.Println("error writing json: ", err)
+		return
+	}
+	err = conn.Close()
+	if err != nil {
+		log.Println("error writing json: ", err)
+		return
+	}
 }
 
 type hub struct {
@@ -58,7 +67,10 @@ func (h *hub) SendToUser(userID uint, msg any) {
 	conns := h.clients[userID]
 
 	for conn := range conns {
-		conn.WriteJSON(msg)
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			log.Println("error writing json: ", err)
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,20 +18,33 @@ func (h *handler) newMessage(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Println("error cloning connection: ", err)
+		}
+	}()
 
 	// auth first message
 	var authMsg struct {
 		Token string `json:"token"`
 	}
 
-	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
+	err = conn.SetReadDeadline(time.Now().Add(10 * time.Second))
+	if err != nil {
+		log.Println("error setting read deadline")
+	}
 	if err := conn.ReadJSON(&authMsg); err != nil {
 		return
 	}
-	conn.SetReadDeadline(time.Time{}) // clear, or extend via pong handler
+	err = conn.SetReadDeadline(time.Time{}) // clear, or extend via pong handler
+	if err != nil {
+		log.Println("error setting read deadline")
+	}
 	conn.SetPongHandler(func(string) error {
-		conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		err = conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		if err != nil {
+			log.Println("error setting read deadline")
+		}
 		return nil
 	})
 
@@ -57,10 +71,13 @@ func (h *handler) newMessage(ctx *gin.Context) {
 	// register connection
 	userIDint, err := strconv.Atoi(userID)
 	if err != nil {
-		conn.WriteJSON(map[string]string{
+		err = conn.WriteJSON(map[string]string{
 			"type":    "error",
 			"message": middleware.ErrInvalidJWT.Error(),
 		})
+		if err != nil {
+			log.Println("error writing json: ", err)
+		}
 		return
 	}
 
@@ -79,18 +96,24 @@ func (h *handler) newMessage(ctx *gin.Context) {
 		}
 
 		if msg.ChatID == 0 || strings.TrimSpace(msg.Content) == "" {
-			conn.WriteJSON(map[string]string{
+			err = conn.WriteJSON(map[string]string{
 				"type":    "error",
 				"message": "invalid message",
 			})
+			if err != nil {
+				log.Println("error writing json: ", err)
+			}
 			continue
 		} else {
 			participants, err := h.csvc.GetChatParticipants(msg.ChatID)
 			if err != nil {
-				conn.WriteJSON(map[string]string{
+				err = conn.WriteJSON(map[string]string{
 					"type":    "error",
 					"message": "chat not found",
 				})
+				if err != nil {
+					log.Println("error writing json: ", err)
+				}
 				continue
 			}
 
@@ -108,10 +131,13 @@ func (h *handler) newMessage(ctx *gin.Context) {
 
 			message, err := h.csvc.NewMessage(uint(userIDint), msg.ChatID, msg.Content)
 			if err != nil {
-				conn.WriteJSON(map[string]string{
+				err = conn.WriteJSON(map[string]string{
 					"type":    "error",
 					"message": "failed to send message",
 				})
+				if err != nil {
+					log.Println("error writing json: ", err)
+				}
 				continue
 			}
 

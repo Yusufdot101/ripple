@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
@@ -76,4 +77,11 @@ func (csvc *ChatService) GetMessages(chatID uint) ([]*domain.Message, error) {
 
 func (csvc *ChatService) DeleteMessage(userID, messageID uint) (uint, error) {
 	return csvc.repo.DeleteMessage(userID, messageID)
+}
+
+func (csvc *ChatService) EditMessage(userID, messageID uint, newContent string) (uint, error) {
+	if strings.Trim(newContent, " ") == "" {
+		return 0, domain.ErrInvalidMessageContent
+	}
+	return csvc.repo.EditMessage(userID, messageID, newContent)
 }
