@@ -62,3 +62,47 @@ func (rts *RepositoryTestSuite) TestDeleteMessage() {
 	rts.Require().Nil(err)
 	rts.Require().Equal(0, len(messages))
 }
+
+func (rts *RepositoryTestSuite) TestEditMessage() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	chat := domain.NewChat()
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	var userID uint = 1
+	message := domain.NewMessage(chat.ID, userID, "test message")
+	err = adapater.InsertMessage(message)
+	rts.Require().Nil(err)
+
+	err = adapater.EditMessage(userID, message.ID, "new content")
+	rts.Require().Nil(err)
+
+	messages, err := adapater.GetMessages(chat.ID)
+	rts.Require().Nil(err)
+
+	rts.Require().Equal("new content", messages[0].Content)
+}
+
+func (rts *RepositoryTestSuite) TestEditMessageFail() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	chat := domain.NewChat()
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	var userID uint = 1
+	message := domain.NewMessage(chat.ID, userID, "original content")
+	err = adapater.InsertMessage(message)
+	rts.Require().Nil(err)
+
+	err = adapater.EditMessage(2, message.ID, "new content")
+	rts.NotNil(err)
+
+	messages, err := adapater.GetMessages(chat.ID)
+	rts.Require().Nil(err)
+
+	rts.Require().Equal("original content", messages[0].Content)
+}

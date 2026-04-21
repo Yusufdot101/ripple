@@ -2,6 +2,8 @@ package postgresql
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"time"
 
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
@@ -87,4 +89,33 @@ func (a *Adapter) DeleteMessage(userID, messageID uint) (uint, error) {
 	}
 
 	return messageModel.ChatID, nil
+}
+
+func (a *Adapter) EditMessage(userID, messageID uint, newContent string) error {
+	if strings.Trim(newContent, " ") == "" {
+		return domain.ErrInvalidMessageContent
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	messageModel := &Message{}
+	// fetch the message
+	err := a.db.WithContext(ctx).Where("id = ? AND sender_id = ?", messageID, userID).First(messageModel).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.ErrRecordNotFound
+		}
+		return err
+	}
+
+	// verify updateablity
+	updateWindow := time.Hour
+	if time.Since(messageModel.CreatedAt) > updateWindow {
+		return domain.ErrUpdateWindowOver
+	}
+
+	// update
+	err = a.db.WithContext(ctx).Table("messages").Where("id = ? AND sender_id = ?", messageID, userID).Update("content", newContent).Error
+	return err
 }
