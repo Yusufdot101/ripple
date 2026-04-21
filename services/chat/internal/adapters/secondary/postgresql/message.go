@@ -91,9 +91,9 @@ func (a *Adapter) DeleteMessage(userID, messageID uint) (uint, error) {
 	return messageModel.ChatID, nil
 }
 
-func (a *Adapter) EditMessage(userID, messageID uint, newContent string) error {
+func (a *Adapter) EditMessage(userID, messageID uint, newContent string) (uint, error) {
 	if strings.Trim(newContent, " ") == "" {
-		return domain.ErrInvalidMessageContent
+		return 0, domain.ErrInvalidMessageContent
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -104,18 +104,21 @@ func (a *Adapter) EditMessage(userID, messageID uint, newContent string) error {
 	err := a.db.WithContext(ctx).Where("id = ? AND sender_id = ?", messageID, userID).First(messageModel).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return domain.ErrRecordNotFound
+			return 0, domain.ErrRecordNotFound
 		}
-		return err
+		return 0, err
 	}
 
 	// verify updateablity
 	updateWindow := time.Hour
 	if time.Since(messageModel.CreatedAt) > updateWindow {
-		return domain.ErrUpdateWindowOver
+		return 0, domain.ErrUpdateWindowOver
 	}
 
 	// update
-	err = a.db.WithContext(ctx).Table("messages").Where("id = ? AND sender_id = ?", messageID, userID).Update("content", newContent).Error
-	return err
+	err = a.db.WithContext(ctx).
+		Model(&Message{}).
+		Where("id = ? AND sender_id = ?", messageID, userID).
+		Update("content", newContent).Error
+	return messageModel.ChatID, err
 }
