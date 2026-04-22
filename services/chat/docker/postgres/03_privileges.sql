@@ -1,0 +1,7 @@
+GRANT ALL PRIVILEGES ON DATABASE chat_service_db TO chat_service;
+
+\c chat_service_db
+
+GRANT ALL ON SCHEMA public TO chat_service;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO chat_service;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO chat_service;

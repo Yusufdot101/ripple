@@ -8,6 +8,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/Yusufdot101/ripple-proto/golang/user v1.0.0 h1:NLpJ/z1ucjbC9v667RHR5oMyDrh0EqoLb2A/XE0fWGk=
 github.com/Yusufdot101/ripple-proto/golang/user v1.0.0/go.mod h1:iBcak6jzG6FciRt1sUjPrRl1Ii30UgMiP72UG7ZQKxI=
+github.com/Yusufdot101/ripple/shared/middleware v0.0.0-20260422101917-3ee96885b1e3 h1:iIFGf2tEL/mPbIAxfxqewj8XovKeMPkb85kbxUsQcxA=
+github.com/Yusufdot101/ripple/shared/middleware v0.0.0-20260422101917-3ee96885b1e3/go.mod h1:EKXnCgqwCKLIdUuSOmg9NZn1+5ldXaIurSIqBmfXRvM=
 github.com/bytedance/gopkg v0.1.4 h1:oZnQwnX82KAIWb7033bEwtxvTqXcYMxDBaQxo5JJHWM=
 github.com/bytedance/gopkg v0.1.4/go.mod h1:v1zWfPm21Fb+OsyXN2VAHdL6TBb2L88anLQgdyje6R4=
 github.com/bytedance/sonic v1.15.0 h1:/PXeWFaR5ElNcVE84U0dOHjiMHQOwNIx3K4ymzh/uSE=

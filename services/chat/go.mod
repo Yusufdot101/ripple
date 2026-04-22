@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/Yusufdot101/ripple-proto/golang/user v1.0.0
-	github.com/Yusufdot101/ripple/shared/middleware v0.0.0-20260418035455-f4b4fe473426
+	github.com/Yusufdot101/ripple/shared/middleware v0.0.0-20260422101917-3ee96885b1e3
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
@@ -17,8 +17,6 @@ require (
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
 )
-
-replace github.com/Yusufdot101/ripple/shared/middleware => ../../shared/middleware/
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
