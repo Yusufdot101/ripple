@@ -54,9 +54,11 @@ const ChatPage = () => {
 
             if (data.type === "messageDeleted") {
                 setMessages((prev) => {
-                    return prev.filter((msg) => {
-                        return msg.ID !== data.messageID;
-                    });
+                    return prev.map((msg) =>
+                        msg.ID === data.messageID
+                            ? { ...msg, Deleted: true }
+                            : msg,
+                    );
                 });
                 return;
             }

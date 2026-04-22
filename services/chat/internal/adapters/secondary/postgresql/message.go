@@ -11,10 +11,14 @@ import (
 )
 
 type Message struct {
-	gorm.Model
-	ChatID   uint
-	SenderID uint
-	Content  string
+	ID        uint `gorm:"primarykey"`
+	ChatID    uint
+	SenderID  uint
+	Content   string
+	Deleted   bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time
 }
 
 func (a *Adapter) InsertMessage(message *domain.Message) error {
@@ -58,6 +62,8 @@ func (a *Adapter) GetMessages(chatID uint) ([]*domain.Message, error) {
 			UpdatedAt: messageModel.UpdatedAt,
 			SenderID:  messageModel.SenderID,
 			Content:   messageModel.Content,
+			DeletedAt: messageModel.DeletedAt,
+			Deleted:   messageModel.Deleted,
 		}
 		messages = append(messages, message)
 	}
@@ -80,14 +86,15 @@ func (a *Adapter) DeleteMessage(userID, messageID uint) (uint, error) {
 	}
 
 	res := a.db.WithContext(ctx).
+		Model(&Message{}).
 		Where("id = ? AND sender_id = ?", messageID, userID).
-		Delete(&Message{})
+		Updates(map[string]any{
+			"content":    "",
+			"deleted_at": "Now()",
+			"deleted":    true,
+		})
 	if res.Error != nil {
 		return 0, err
-	}
-
-	if res.RowsAffected == 0 {
-		return 0, domain.ErrRecordNotFound
 	}
 
 	return messageModel.ChatID, nil
@@ -139,6 +146,8 @@ func (a *Adapter) EditMessage(userID, messageID uint, newContent string) (*domai
 		UpdatedAt: messageModel.UpdatedAt,
 		ChatID:    messageModel.ChatID,
 		SenderID:  messageModel.SenderID,
+		DeletedAt: messageModel.DeletedAt,
+		Deleted:   messageModel.Deleted,
 	}
 
 	return message, err

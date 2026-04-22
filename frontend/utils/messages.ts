@@ -9,6 +9,8 @@ export interface MessageType {
     Content: string;
     CreatedAt: string;
     UpdatedAt: string;
+    DeletedAt: string;
+    Deleted: boolean;
 }
 
 export const getChatMessages = async (
@@ -41,11 +43,13 @@ export const deleteMessage = async (messageID: number) => {
         const res = await api(`${baseURL}/${messageID}`, {
             method: "DELETE",
         });
+        console.log(res);
         if (!res) {
             alert("an error occured deleting message");
             return;
         }
         const data = await res.json();
+        console.log(data);
         if (data.error) {
             alert("an error occured deleting message");
         }
@@ -68,12 +72,15 @@ export const editMessage = async (
         });
         if (!res) {
             alert("an error occured editing message");
-            return;
+            return false;
         }
         const data = await res.json();
         if (data.error) {
             alert("an error occured editing message: " + data.error);
+            return false;
         }
+
+        return true;
     } catch (error) {
         console.error(error);
     }

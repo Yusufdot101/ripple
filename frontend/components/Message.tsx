@@ -135,9 +135,37 @@ const Message = ({
                 hidden={isEditingCurrentMessage}
                 className={`${message.SenderID === userID ? "bg-accent/80" : "bg-foreground/20"} flex flex-col w-fit py-[4px] px-[8px] rounded-[4px]`}
             >
-                {message.Content}
+                {message.Deleted ? (
+                    <div className="flex items-center gap-x-[4px]">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-foreground h-[16px] opacity-75"
+                        >
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g
+                                id="SVGRepo_tracerCarrier"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            ></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M5.63605 5.63603L18.364 18.364M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                ></path>
+                            </g>
+                        </svg>
+                        <span>Message Deleted</span>
+                    </div>
+                ) : (
+                    <span>{message.Content}</span>
+                )}
                 <span className="text-[12px] opacity-75 text-right">
-                    {messageIsEdited ? "Edited " : ""}
+                    {messageIsEdited && !message.Deleted ? "Edited " : ""}
                     {formattedDate}
                 </span>
 
