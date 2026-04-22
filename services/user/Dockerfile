@@ -33,8 +33,12 @@ FROM alpine:3.22
 
 WORKDIR /app
 
-ARG APP=api  # re-declare it here
+RUN addgroup -S app && adduser -S -G app app
 
-COPY --from=builder /app/$APP ./server
+ARG APP=api
+
+COPY --from=builder --chown=app:app /app/$APP ./server
+
+USER app
 
 CMD ["./server"]
