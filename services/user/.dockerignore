@@ -1,4 +1,5 @@
 config/.env
+config/docker.env
 coverage.out
 tmp/*
 bin/*

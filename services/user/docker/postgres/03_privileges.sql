@@ -1,0 +1,7 @@
+GRANT ALL PRIVILEGES ON DATABASE user_service_db TO user_service;
+
+\c user_service_db
+
+GRANT ALL ON SCHEMA public TO user_service;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO user_service;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO user_service;

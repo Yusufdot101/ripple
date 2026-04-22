@@ -1,0 +1,56 @@
+services:
+    api:
+        build:
+            context: .
+            args:
+                APP: api
+        ports:
+            - "8080:8080"
+        env_file:
+            - ./config/docker.env
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - ripple-user-service-net
+
+    grpc:
+        build:
+            context: .
+            args:
+                APP: grpc
+        ports:
+            - "9001:9001"
+        env_file:
+            - ./config/docker.env
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - ripple-user-service-net
+
+    postgres:
+        image: postgres:18.3
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: ripple-auth
+        ports:
+            - "5433:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql
+            - ./docker/postgres:/docker-entrypoint-initdb.d
+        networks:
+            - ripple-user-service-net
+
+volumes:
+    pgdata:
+
+networks:
+    ripple-user-service-net:
+        driver: bridge

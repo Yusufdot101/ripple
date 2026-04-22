@@ -1,18 +1,10 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
-
-	"github.com/joho/godotenv"
 )
-
-func init() {
-	home, _ := os.UserHomeDir()
-	_ = godotenv.Load(fmt.Sprintf("%s/Documents/projects/ripple/services/user/config/.env", home))
-}
 
 func GetDatabaseURL() string {
 	return getEnvVariable("DATABASE_URL")
