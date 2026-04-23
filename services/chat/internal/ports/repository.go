@@ -8,8 +8,18 @@ type Repository interface {
 	GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, error)
 	GetChatUsers(chatID uint) ([]*domain.ChatParticipant, error)
 	WithTx(fn func(repo Repository) error) error
+
 	InsertMessage(message *domain.Message) error
 	GetMessages(chatID uint) ([]*domain.Message, error)
 	DeleteMessage(userID, messageID uint) (uint, error)
 	EditMessage(userID, messageID uint, newContent string) (*domain.Message, error)
+
+	// create role
+	NewRole(role *domain.Role) error
+	// create permission
+	NewPermission(permission *domain.Permission) error
+	// add permission to role
+	GrantRolePermission(roleID uint, permissionName domain.PermissionType) error
+	// add role to chat participant
+	GrantUserRole(userID uint, roleName domain.RoleType) error
 }

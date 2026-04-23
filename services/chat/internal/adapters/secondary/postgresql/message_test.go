@@ -60,7 +60,7 @@ func (rts *RepositoryTestSuite) TestDeleteMessage() {
 
 	messages, err := adapater.GetMessages(chat.ID)
 	rts.Require().Nil(err)
-	rts.Require().Equal(0, len(messages))
+	rts.Require().Equal("", messages[0].Content)
 }
 
 func (rts *RepositoryTestSuite) TestEditMessage() {

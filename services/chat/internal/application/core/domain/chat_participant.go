@@ -4,6 +4,7 @@ type ChatParticipant struct {
 	ID     uint
 	UserID uint
 	ChatID uint
+	RoleID uint
 }
 
 func NewChatParticipant(userID, chatID uint) *ChatParticipant {

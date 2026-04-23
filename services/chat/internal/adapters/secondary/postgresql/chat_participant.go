@@ -12,12 +12,14 @@ type ChatParticipant struct {
 	gorm.Model
 	UserID uint `gorm:"uniqueIndex:user_chat_idx"`
 	ChatID uint `gorm:"uniqueIndex:user_chat_idx"`
+	RoleID uint
 }
 
 func (a *Adapter) InsertChatParticipant(chatParticipant *domain.ChatParticipant) error {
 	chatParticipantModel := &ChatParticipant{
 		UserID: chatParticipant.UserID,
 		ChatID: chatParticipant.ChatID,
+		RoleID: chatParticipant.RoleID,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
