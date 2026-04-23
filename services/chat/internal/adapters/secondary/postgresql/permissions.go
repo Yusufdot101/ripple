@@ -81,3 +81,26 @@ func (a *Adapter) GrantRolePermission(roleID uint, permission domain.PermissionT
 	err = a.db.WithContext(ctx).Save(rolePermissionModel).Error
 	return err
 }
+
+// add role to chat participant
+func (a *Adapter) GrantUserRole(userID uint, roleName domain.RoleType) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	roleModel := &Role{}
+	err := a.db.WithContext(ctx).Where("name = ?", roleName).First(roleModel).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.ErrInvalidRole
+		}
+		return err
+	}
+
+	chatParticipantModel := &ChatParticipant{}
+
+	err = a.db.WithContext(ctx).
+		Model(chatParticipantModel).
+		Where("id = ?", userID).
+		Update("role_id", roleModel.ID).Error
+	return err
+}

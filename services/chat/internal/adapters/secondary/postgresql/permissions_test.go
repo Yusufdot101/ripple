@@ -50,3 +50,45 @@ func (rts *RepositoryTestSuite) TestGrantRolePermissionFail() {
 	err = adapater.GrantRolePermission(role.ID, domain.ReadMessage)
 	rts.Require().Equal(domain.ErrInvalidPermission, err)
 }
+
+func (rts *RepositoryTestSuite) TestGrantUserRole() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	// create chat
+	chat := domain.NewChat()
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	// create chat participant
+	chatParticipant := domain.NewChatParticipant(1, chat.ID)
+	err = adapater.InsertChatParticipant(chatParticipant)
+	rts.Nil(err)
+
+	// create role
+	role := domain.NewRole(domain.Admin)
+	err = adapater.NewRole(role)
+	rts.Require().Nil(err)
+
+	err = adapater.GrantUserRole(chatParticipant.ID, role.Name)
+	rts.Require().Nil(err)
+}
+
+func (rts *RepositoryTestSuite) TestGrantUserRoleFail() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	// create chat
+	chat := domain.NewChat()
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	// create chat participant
+	chatParticipant := domain.NewChatParticipant(1, chat.ID)
+	err = adapater.InsertChatParticipant(chatParticipant)
+	rts.Nil(err)
+
+	// role not in the database, should error
+	err = adapater.GrantUserRole(chatParticipant.ID, domain.Admin)
+	rts.Require().Equal(domain.ErrInvalidRole, err)
+}
