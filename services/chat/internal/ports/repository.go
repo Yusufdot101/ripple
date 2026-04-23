@@ -14,12 +14,8 @@ type Repository interface {
 	DeleteMessage(userID, messageID uint) (uint, error)
 	EditMessage(userID, messageID uint, newContent string) (*domain.Message, error)
 
-	// create role
 	NewRole(role *domain.Role) error
-	// create permission
 	NewPermission(permission *domain.Permission) error
-	// add permission to role
 	GrantRolePermission(roleID uint, permissionName domain.PermissionType) error
-	// add role to chat participant
 	GrantUserRole(userID uint, roleName domain.RoleType) error
 }
