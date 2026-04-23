@@ -7,4 +7,7 @@ var (
 	ErrRecordNotFound        = errors.New("record not found")
 	ErrUpdateWindowOver      = errors.New("message update window over")
 	ErrInvalidMessageContent = errors.New("invalid message content")
+
+	ErrInvalidPermission = errors.New("invalid permission")
+	ErrInvalidRole       = errors.New("invalid role")
 )
