@@ -121,3 +121,33 @@ func (a *Adapter) GetUserRole(userID uint) (*domain.Role, error) {
 
 	return role, nil
 }
+
+func (a *Adapter) GetUserPermissions(userID uint) ([]*domain.Permission, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	permissionModels := []*Permission{}
+
+	// chat_participants: role_id -> role_permissions: permission_id -> permissions
+	err := a.db.WithContext(ctx).
+		Table("permissions").
+		Joins("JOIN role_permissions ON role_permissions.permission_id = permissions.id").
+		Joins("JOIN chat_participants ON chat_participants.role_id = role_permissions.role_id").
+		Where("chat_participants.user_id = ?", userID).
+		Find(&permissionModels).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	permissions := []*domain.Permission{}
+	for _, permission := range permissionModels {
+		permission := &domain.Permission{
+			ID:   permission.ID,
+			Name: permission.Name,
+		}
+		permissions = append(permissions, permission)
+	}
+
+	return permissions, nil
+}

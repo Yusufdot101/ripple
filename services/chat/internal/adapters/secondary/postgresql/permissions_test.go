@@ -123,3 +123,44 @@ func (rts *RepositoryTestSuite) TestGetUserRole() {
 	rts.Require().Equal(role.ID, gotRole.ID)
 	rts.Require().Equal(role.Name, gotRole.Name)
 }
+
+func (rts *RepositoryTestSuite) TestGetRolePermissions() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	// create chat
+	chat := domain.NewChat()
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	// create chat participant
+	chatParticipant := domain.NewChatParticipant(1, chat.ID)
+	err = adapater.InsertChatParticipant(chatParticipant)
+	rts.Nil(err)
+
+	// create role
+	role := domain.NewRole(domain.Admin)
+	err = adapater.NewRole(role)
+	rts.Require().Nil(err)
+
+	// create permission
+	permission := domain.NewPermission(domain.ReadMessage)
+	err = adapater.NewPermission(permission)
+	rts.Require().Nil(err)
+
+	// grant permission to role
+	err = adapater.GrantRolePermission(role.ID, permission.Name)
+	rts.Require().Nil(err)
+
+	// grant role to user
+	err = adapater.GrantUserRole(role.ID, role.Name)
+	rts.Require().Nil(err)
+
+	// get the permissions
+	gotPermissions, err := adapater.GetUserPermissions(chatParticipant.UserID)
+	rts.Require().Nil(err)
+
+	rts.Require().Equal(1, len(gotPermissions))
+	rts.Require().Equal(permission.ID, gotPermissions[0].ID)
+	rts.Require().Equal(permission.Name, gotPermissions[0].Name)
+}
