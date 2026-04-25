@@ -2,15 +2,17 @@
 import UserCard from "@/components/UserCard";
 import UserCardSkeleton from "@/components/UserCardSkeleton";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getChatByUserIDs } from "@/utils/chats";
 import { getUsersByEmail, UserType } from "@/utils/users";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 
-const Contacts = () => {
+interface Props {
+    selectedUsers: number[];
+    handleUserClick: (userID: number) => void;
+}
+
+const Contacts = ({ selectedUsers, handleUserClick }: Props) => {
     const [users, setUsers] = useState<UserType[]>([]);
-    const [activeUser, setActiveUser] = useState<number>();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -21,14 +23,6 @@ const Contacts = () => {
             setIsLoading(false);
         })();
     }, []);
-
-    const router = useRouter();
-    const handleClick = async (userID: number) => {
-        setActiveUser(userID);
-        const chat = await getChatByUserIDs([userID]);
-        if (!chat) return;
-        router.push(`/chats/${chat.ID}`);
-    };
 
     const loggedInUserID = useAuthStore((state) => state.userID);
     const visibleUsers = (users ?? []).filter(
@@ -41,7 +35,7 @@ const Contacts = () => {
                 handleEnter={async (email: string) => {
                     setUsers([]);
                     setIsLoading(true);
-                    const users = await getUsersByEmail(email);
+                    const users = await getUsersByEmail(email.trim());
                     setUsers(users);
                     setIsLoading(false);
                 }}
@@ -63,10 +57,10 @@ const Contacts = () => {
             >
                 {visibleUsers.map((user) => (
                     <UserCard
-                        activeUserID={activeUser || -100}
+                        activeUsers={selectedUsers}
                         key={user.id}
                         user={user}
-                        handleClick={handleClick}
+                        handleClick={handleUserClick}
                     />
                 ))}
             </div>
