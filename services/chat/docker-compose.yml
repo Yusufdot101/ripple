@@ -2,6 +2,9 @@ services:
     chat-api:
         build:
             context: .
+            target: dev
+        volumes:
+            - .:/app
         ports:
             - "8081:8081"
         env_file:
@@ -15,6 +18,8 @@ services:
 
     chat-postgres:
         image: postgres:18.3
+        ports:
+            - "127.0.0.1:5434:5432"
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
             interval: 5s

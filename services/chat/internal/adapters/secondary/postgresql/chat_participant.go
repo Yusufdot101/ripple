@@ -10,14 +10,16 @@ import (
 
 type ChatParticipant struct {
 	gorm.Model
-	UserID uint `gorm:"uniqueIndex:user_chat_idx"`
-	ChatID uint `gorm:"uniqueIndex:user_chat_idx"`
+	UserID     uint `gorm:"uniqueIndex:user_chat_idx"`
+	ChatID     uint `gorm:"uniqueIndex:user_chat_idx"`
+	ChatRoleID uint
 }
 
 func (a *Adapter) InsertChatParticipant(chatParticipant *domain.ChatParticipant) error {
 	chatParticipantModel := &ChatParticipant{
-		UserID: chatParticipant.UserID,
-		ChatID: chatParticipant.ChatID,
+		UserID:     chatParticipant.UserID,
+		ChatID:     chatParticipant.ChatID,
+		ChatRoleID: chatParticipant.ChatRoleID,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
