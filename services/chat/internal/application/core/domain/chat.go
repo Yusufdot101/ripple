@@ -1,15 +1,18 @@
 package domain
 
 type CreateChatWithParticipantsRequestType struct {
-	Name            string
+	Name            string              `json:"name"`
 	RolePermissions map[string][]string `json:"rolePermissions"`
 	UserRoles       map[uint]string     `json:"userRoles"`
 }
 
 type Chat struct {
-	ID uint
+	Name string
+	ID   uint
 }
 
-func NewChat() *Chat {
-	return &Chat{}
+func NewChat(name string) *Chat {
+	return &Chat{
+		Name: name,
+	}
 }

@@ -3,12 +3,14 @@ import { api, BASE_CHAT_SERVICE_API_URL } from "./api";
 
 interface ChatType {
     ID: number;
+    Name: string;
 }
 
 export const getChatByUserIDs = async (
     userIDs?: number[],
     rolePermissions?: Map<string, string[]>,
     userRoles?: Map<number, string>,
+    chatName?: string,
 ): Promise<ChatType | undefined> => {
     try {
         if (!userIDs && (!rolePermissions || !userRoles)) return;
@@ -35,6 +37,7 @@ export const getChatByUserIDs = async (
             body: JSON.stringify({
                 rolePermissions: Object.fromEntries(rolePermissions),
                 userRoles: Object.fromEntries(userRoles),
+                name: chatName,
             }),
         });
 

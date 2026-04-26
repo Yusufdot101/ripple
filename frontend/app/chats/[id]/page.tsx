@@ -30,10 +30,7 @@ const ChatPage = () => {
         wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
         wsUrl.pathname = `${wsUrl.pathname.replace(/\/$/, "")}/messages/new`;
 
-        const socket = new WebSocket(
-            // `ws://${BASE_CHAT_SERVICE_API_URL}/messages/new`,
-            wsUrl.toString(),
-        );
+        const socket = new WebSocket(wsUrl.toString());
         socketRef.current = socket;
 
         socket.onopen = () => {

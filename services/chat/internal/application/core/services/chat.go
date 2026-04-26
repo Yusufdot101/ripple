@@ -43,7 +43,7 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 	err = csvc.repo.WithTx(func(repo ports.Repository) error {
 		// steps:
 		// 1. create chat
-		chat = domain.NewChat()
+		chat = domain.NewChat(createChatRequest.Name)
 		err := repo.InsertChat(chat)
 		if err != nil {
 			return err

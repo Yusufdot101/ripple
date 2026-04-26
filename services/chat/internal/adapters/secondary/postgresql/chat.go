@@ -19,7 +19,9 @@ type Chat struct {
 }
 
 func (a *Adapter) InsertChat(chat *domain.Chat) error {
-	chatModel := &Chat{}
+	chatModel := &Chat{
+		Name: chat.Name,
+	}
 
 	res := a.db.Save(chatModel)
 	if res.Error == nil {
@@ -49,8 +51,10 @@ func (a *Adapter) GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, 
 		return nil, res.Error
 	}
 
-	chat := &domain.Chat{}
-	chat.ID = chatModel.ID
+	chat := &domain.Chat{
+		ID:   chatModel.ID,
+		Name: chatModel.Name,
+	}
 
 	return chat, nil
 }

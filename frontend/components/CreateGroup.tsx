@@ -4,7 +4,6 @@ import { UserType } from "@/utils/users";
 import { useState } from "react";
 import BackArrowButton from "./BackArrowButton";
 import XButton from "./XButton";
-import MessageSVG from "./MessageSVG";
 import { getChatByUserIDs } from "@/utils/chats";
 import { useRouter } from "next/navigation";
 
@@ -28,8 +27,8 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
         });
     };
 
-    const [showPermissionConfigScreen, setShowPermissionConfigScreen] =
-        useState(false);
+    const [showConfigScreen, setShowConfigScreen] = useState(false);
+    const [groupName, setGroupName] = useState("");
 
     const [memberPermissions, setMemberPermissions] = useState({
         "send message": true,
@@ -62,9 +61,11 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
             undefined,
             rolePermissions,
             userRoles,
+            groupName,
         );
         if (!chat) return;
         router.push(`/chats/${chat.ID}`);
+        handleClose();
     };
 
     return (
@@ -72,7 +73,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
             className={`${createGroupOpen ? "translate-x-0" : "translate-x-full"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex-1 flex overflow-x-hidden`}
         >
             <div
-                className={`${showPermissionConfigScreen ? "-translate-x-full" : "translate-x-0"} h-full transition-transform duration-300 ease-in-out flex flex-1 flex-col gap-y-[8px]`}
+                className={`${showConfigScreen ? "-translate-x-full" : "translate-x-0"} h-full transition-transform duration-300 ease-in-out flex flex-1 flex-col gap-y-[8px]`}
             >
                 <div className="flex w-full h-[32px] gap-x-[8px] items-center">
                     <BackArrowButton
@@ -114,9 +115,9 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
                         <button
                             aria-label="create group"
                             className=" bg-background border-1 border-foreground text-white p-[4px] rounded-[4px] hover:bg-foreground/10 active:bg-background duration-300 cursor-pointer w-full"
-                            onClick={() => setShowPermissionConfigScreen(true)}
+                            onClick={() => setShowConfigScreen(true)}
                         >
-                            Group permissions
+                            Group info
                         </button>
 
                         <button
@@ -132,12 +133,28 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
 
             {/*Group permission configuration screen*/}
             <div
-                className={`${showPermissionConfigScreen ? "translate-x-0" : "translate-x-full"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
+                className={`${showConfigScreen ? "translate-x-0" : "translate-x-full"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
             >
                 <div className="flex w-full h-[32px] gap-x-[8px] items-center">
                     <BackArrowButton
-                        handleClick={() => setShowPermissionConfigScreen(false)}
-                        text="Group permissions"
+                        handleClick={() => setShowConfigScreen(false)}
+                        text="Group info"
+                    />
+                </div>
+
+                <div className="flex flex-col gap-y-[2px]">
+                    <label htmlFor="groupName" className="text-foreground/70">
+                        Group name:
+                    </label>
+                    <input
+                        type="text"
+                        className="w-full bg-foreground text-background px-[4px] py-[2px] border-none outline-none rounded-[4px]"
+                        placeholder="group name"
+                        value={groupName}
+                        onChange={(e) => {
+                            setGroupName(e.target.value);
+                        }}
+                        id="groupName"
                     />
                 </div>
 
