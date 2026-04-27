@@ -10,6 +10,16 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 
+#############
+# dev layer #
+#############
+FROM deps AS dev
+WORKDIR /app
+RUN go install github.com/air-verse/air@latest
+COPY . .
+
+CMD ["air"]
+
 ###############
 # build layer #
 ###############

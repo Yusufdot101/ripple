@@ -11,6 +11,8 @@ type Repository interface {
 	FindUserByProviderAndSub(provider, sub string) (*domain.User, error)
 	FindUsersByID(context.Context, []uint32) ([]*domain.User, error)
 	FindUsersByEmail(email string) ([]*domain.User, error)
+	SearchUsers(ctx context.Context, query string, ids []uint32) ([]*domain.User, error)
+	GetContacts(ctx context.Context, query string, excludeIds []uint32, currentUserID uint32) ([]*domain.User, error)
 
 	InsertToken(token *domain.Token) error
 	GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error)

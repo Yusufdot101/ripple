@@ -1,13 +1,13 @@
 package grpc
 
 import (
-	"github.com/Yusufdot101/ripple-proto/golang/user"
+	userpb "github.com/Yusufdot101/ripple-proto/golang/user/v4"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Adapter struct {
-	userClient user.UserServiceClient
+	userClient userpb.UserServiceClient
 	conn       *grpc.ClientConn
 }
 
@@ -20,7 +20,7 @@ func NewAdapter(url string) (*Adapter, error) {
 		return nil, err
 	}
 
-	client := user.NewUserServiceClient(conn)
+	client := userpb.NewUserServiceClient(conn)
 	return &Adapter{
 		conn:       conn,
 		userClient: client,

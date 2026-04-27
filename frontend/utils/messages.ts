@@ -43,13 +43,11 @@ export const deleteMessage = async (messageID: number) => {
         const res = await api(`${baseURL}/${messageID}`, {
             method: "DELETE",
         });
-        console.log(res);
         if (!res) {
             alert("an error occured deleting message");
             return;
         }
         const data = await res.json();
-        console.log(data);
         if (data.error) {
             alert("an error occured deleting message");
         }

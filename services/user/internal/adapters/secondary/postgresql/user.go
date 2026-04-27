@@ -58,10 +58,10 @@ func (a *Adapter) FindUserByProviderAndSub(provider, sub string) (*domain.User, 
 }
 
 func (a *Adapter) FindUsersByID(ctx context.Context, userIDs []uint32) ([]*domain.User, error) {
-	var usersModel []User
-	res := a.DB.WithContext(ctx).Where("id IN ?", userIDs).Find(&usersModel)
+	var userModels []User
+	res := a.DB.WithContext(ctx).Where("id IN ?", userIDs).Find(&userModels)
 	var users []*domain.User
-	for _, userModel := range usersModel {
+	for _, userModel := range userModels {
 		users = append(users, &domain.User{
 			ID:        userModel.ID,
 			Sub:       userModel.Sub,
@@ -78,19 +78,19 @@ func (a *Adapter) FindUsersByEmail(email string) ([]*domain.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var usersModel []User
+	var userModels []User
 	var res *gorm.DB
 	if email == "" {
-		res = a.DB.WithContext(ctx).Find(&usersModel)
+		res = a.DB.WithContext(ctx).Find(&userModels)
 	} else {
 		// to_tsvector('simple', email) @@ plainto_tsquery('simple', ?)
 		res = a.DB.WithContext(ctx).Where(`
 			email ILIKE ?
-			`, "%"+email+"%").Find(&usersModel)
+			`, "%"+email+"%").Find(&userModels)
 	}
 
 	var users []*domain.User
-	for _, userModel := range usersModel {
+	for _, userModel := range userModels {
 		users = append(users, &domain.User{
 			ID:        userModel.ID,
 			Sub:       userModel.Sub,
@@ -101,4 +101,57 @@ func (a *Adapter) FindUsersByEmail(email string) ([]*domain.User, error) {
 		})
 	}
 	return users, res.Error
+}
+
+func (a *Adapter) SearchUsers(ctx context.Context, query string, ids []uint32) ([]*domain.User, error) {
+	var userModels []User
+	var res *gorm.DB
+	if query == "" {
+		res = a.DB.WithContext(ctx).Where("id IN ?", ids).Find(&userModels)
+	} else {
+		res = a.DB.WithContext(ctx).Where("id IN ?", ids).Where(`
+			email ILIKE ? OR name ILIKE ?
+			`, "%"+query+"%", "%"+query+"%").Find(&userModels)
+	}
+
+	var users []*domain.User
+	for _, userModel := range userModels {
+		users = append(users, &domain.User{
+			ID:        userModel.ID,
+			Sub:       userModel.Sub,
+			Provider:  userModel.Provider,
+			Name:      userModel.Name,
+			Email:     userModel.Email,
+			CreatedAt: userModel.CreatedAt,
+		})
+	}
+	return users, res.Error
+}
+
+func (a *Adapter) GetContacts(ctx context.Context, query string, excludeIds []uint32, currentUserID uint32) ([]*domain.User, error) {
+	userModels := []*User{}
+	tx := a.DB.WithContext(ctx).Model(&User{}).Where("id != ?", currentUserID)
+
+	if query != "" {
+		searchTerm := "%" + query + "%"
+		tx = tx.Where("name ILIKE ? OR email ILIKE ?", searchTerm, searchTerm)
+	}
+
+	if len(excludeIds) > 0 {
+		tx = tx.Where("id NOT IN ?", excludeIds)
+	}
+	tx.Find(&userModels)
+
+	users := []*domain.User{}
+	for _, userModel := range userModels {
+		users = append(users, &domain.User{
+			ID:        userModel.ID,
+			Sub:       userModel.Sub,
+			Provider:  userModel.Provider,
+			Name:      userModel.Name,
+			Email:     userModel.Email,
+			CreatedAt: userModel.CreatedAt,
+		})
+	}
+	return users, nil
 }

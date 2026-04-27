@@ -8,7 +8,7 @@ func (rts *RepositoryTestSuite) TestInsertChatParticipant() {
 	adapater, err := NewAdapter(rts.dataSourceURL)
 	rts.Require().Nil(err)
 
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
@@ -21,7 +21,7 @@ func (rts *RepositoryTestSuite) TestGetChatUsers() {
 	adapater, err := NewAdapter(rts.dataSourceURL)
 	rts.Require().Nil(err)
 
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
@@ -33,7 +33,7 @@ func (rts *RepositoryTestSuite) TestGetChatUsers() {
 	err = adapater.InsertChatParticipant(chatParticipant2)
 	rts.Require().Nil(err)
 
-	gotParticipants, err := adapater.GetChatUsers(chat.ID)
+	gotParticipants, err := adapater.GetChatUsers(chat.ID, chatParticipant.UserID)
 	rts.Require().Nil(err)
 
 	rts.True(len(gotParticipants) == 2)

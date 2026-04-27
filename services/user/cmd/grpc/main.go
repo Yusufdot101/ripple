@@ -31,9 +31,10 @@ func main() {
 	// get service
 	tsvc := services.NewTokenService(repo)
 	asvc := services.NewAuthService(repo, googleOIDC, tsvc)
+	usvc := services.NewUserService(repo)
 
 	// make grpc server and listen
-	grpcAdapter := grpc.NewAdapter(9001, asvc)
+	grpcAdapter := grpc.NewAdapter(9001, asvc, usvc)
 
 	if err := grpcAdapter.Run(); err != nil {
 		log.Fatalf("error starting grpc server: %v\n", err)

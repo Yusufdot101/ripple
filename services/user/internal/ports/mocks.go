@@ -732,6 +732,86 @@ func (_c *MockRepository_FindUsersByID_Call) RunAndReturn(run func(context1 cont
 	return _c
 }
 
+// GetContacts provides a mock function for the type MockRepository
+func (_mock *MockRepository) GetContacts(ctx context.Context, query string, excludeIds []uint32, currentUserID uint32) ([]*domain.User, error) {
+	ret := _mock.Called(ctx, query, excludeIds, currentUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetContacts")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32, uint32) ([]*domain.User, error)); ok {
+		return returnFunc(ctx, query, excludeIds, currentUserID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32, uint32) []*domain.User); ok {
+		r0 = returnFunc(ctx, query, excludeIds, currentUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, []uint32, uint32) error); ok {
+		r1 = returnFunc(ctx, query, excludeIds, currentUserID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_GetContacts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetContacts'
+type MockRepository_GetContacts_Call struct {
+	*mock.Call
+}
+
+// GetContacts is a helper method to define mock.On call
+//   - ctx context.Context
+//   - query string
+//   - excludeIds []uint32
+//   - currentUserID uint32
+func (_e *MockRepository_Expecter) GetContacts(ctx interface{}, query interface{}, excludeIds interface{}, currentUserID interface{}) *MockRepository_GetContacts_Call {
+	return &MockRepository_GetContacts_Call{Call: _e.mock.On("GetContacts", ctx, query, excludeIds, currentUserID)}
+}
+
+func (_c *MockRepository_GetContacts_Call) Run(run func(ctx context.Context, query string, excludeIds []uint32, currentUserID uint32)) *MockRepository_GetContacts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 []uint32
+		if args[2] != nil {
+			arg2 = args[2].([]uint32)
+		}
+		var arg3 uint32
+		if args[3] != nil {
+			arg3 = args[3].(uint32)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_GetContacts_Call) Return(users []*domain.User, err error) *MockRepository_GetContacts_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockRepository_GetContacts_Call) RunAndReturn(run func(ctx context.Context, query string, excludeIds []uint32, currentUserID uint32) ([]*domain.User, error)) *MockRepository_GetContacts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetTokenByStringAndUse provides a mock function for the type MockRepository
 func (_mock *MockRepository) GetTokenByStringAndUse(tokenString string, tokenUse domain.TokenUse) (*domain.Token, error) {
 	ret := _mock.Called(tokenString, tokenUse)
@@ -898,6 +978,80 @@ func (_c *MockRepository_InsertUser_Call) Return(err error) *MockRepository_Inse
 }
 
 func (_c *MockRepository_InsertUser_Call) RunAndReturn(run func(user *domain.User) error) *MockRepository_InsertUser_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchUsers provides a mock function for the type MockRepository
+func (_mock *MockRepository) SearchUsers(ctx context.Context, query string, ids []uint32) ([]*domain.User, error) {
+	ret := _mock.Called(ctx, query, ids)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchUsers")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32) ([]*domain.User, error)); ok {
+		return returnFunc(ctx, query, ids)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32) []*domain.User); ok {
+		r0 = returnFunc(ctx, query, ids)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, []uint32) error); ok {
+		r1 = returnFunc(ctx, query, ids)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_SearchUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchUsers'
+type MockRepository_SearchUsers_Call struct {
+	*mock.Call
+}
+
+// SearchUsers is a helper method to define mock.On call
+//   - ctx context.Context
+//   - query string
+//   - ids []uint32
+func (_e *MockRepository_Expecter) SearchUsers(ctx interface{}, query interface{}, ids interface{}) *MockRepository_SearchUsers_Call {
+	return &MockRepository_SearchUsers_Call{Call: _e.mock.On("SearchUsers", ctx, query, ids)}
+}
+
+func (_c *MockRepository_SearchUsers_Call) Run(run func(ctx context.Context, query string, ids []uint32)) *MockRepository_SearchUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 []uint32
+		if args[2] != nil {
+			arg2 = args[2].([]uint32)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_SearchUsers_Call) Return(users []*domain.User, err error) *MockRepository_SearchUsers_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockRepository_SearchUsers_Call) RunAndReturn(run func(ctx context.Context, query string, ids []uint32) ([]*domain.User, error)) *MockRepository_SearchUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1264,4 +1418,282 @@ type MockUserService_Expecter struct {
 
 func (_m *MockUserService) EXPECT() *MockUserService_Expecter {
 	return &MockUserService_Expecter{mock: &_m.Mock}
+}
+
+// GetContacts provides a mock function for the type MockUserService
+func (_mock *MockUserService) GetContacts(query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error) {
+	ret := _mock.Called(query, excludeIDs, currentUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetContacts")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string, []uint32, uint32) ([]*domain.User, error)); ok {
+		return returnFunc(query, excludeIDs, currentUserID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string, []uint32, uint32) []*domain.User); ok {
+		r0 = returnFunc(query, excludeIDs, currentUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string, []uint32, uint32) error); ok {
+		r1 = returnFunc(query, excludeIDs, currentUserID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockUserService_GetContacts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetContacts'
+type MockUserService_GetContacts_Call struct {
+	*mock.Call
+}
+
+// GetContacts is a helper method to define mock.On call
+//   - query string
+//   - excludeIDs []uint32
+//   - currentUserID uint32
+func (_e *MockUserService_Expecter) GetContacts(query interface{}, excludeIDs interface{}, currentUserID interface{}) *MockUserService_GetContacts_Call {
+	return &MockUserService_GetContacts_Call{Call: _e.mock.On("GetContacts", query, excludeIDs, currentUserID)}
+}
+
+func (_c *MockUserService_GetContacts_Call) Run(run func(query string, excludeIDs []uint32, currentUserID uint32)) *MockUserService_GetContacts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 []uint32
+		if args[1] != nil {
+			arg1 = args[1].([]uint32)
+		}
+		var arg2 uint32
+		if args[2] != nil {
+			arg2 = args[2].(uint32)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUserService_GetContacts_Call) Return(users []*domain.User, err error) *MockUserService_GetContacts_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockUserService_GetContacts_Call) RunAndReturn(run func(query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error)) *MockUserService_GetContacts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetUsersByEmail provides a mock function for the type MockUserService
+func (_mock *MockUserService) GetUsersByEmail(email string) ([]*domain.User, error) {
+	ret := _mock.Called(email)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUsersByEmail")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]*domain.User, error)); ok {
+		return returnFunc(email)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []*domain.User); ok {
+		r0 = returnFunc(email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(email)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockUserService_GetUsersByEmail_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUsersByEmail'
+type MockUserService_GetUsersByEmail_Call struct {
+	*mock.Call
+}
+
+// GetUsersByEmail is a helper method to define mock.On call
+//   - email string
+func (_e *MockUserService_Expecter) GetUsersByEmail(email interface{}) *MockUserService_GetUsersByEmail_Call {
+	return &MockUserService_GetUsersByEmail_Call{Call: _e.mock.On("GetUsersByEmail", email)}
+}
+
+func (_c *MockUserService_GetUsersByEmail_Call) Run(run func(email string)) *MockUserService_GetUsersByEmail_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUserService_GetUsersByEmail_Call) Return(users []*domain.User, err error) *MockUserService_GetUsersByEmail_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockUserService_GetUsersByEmail_Call) RunAndReturn(run func(email string) ([]*domain.User, error)) *MockUserService_GetUsersByEmail_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetUsersByIDs provides a mock function for the type MockUserService
+func (_mock *MockUserService) GetUsersByIDs(ctx context.Context, userIDs []uint32) ([]*domain.User, error) {
+	ret := _mock.Called(ctx, userIDs)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUsersByIDs")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) ([]*domain.User, error)); ok {
+		return returnFunc(ctx, userIDs)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []uint32) []*domain.User); ok {
+		r0 = returnFunc(ctx, userIDs)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []uint32) error); ok {
+		r1 = returnFunc(ctx, userIDs)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockUserService_GetUsersByIDs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUsersByIDs'
+type MockUserService_GetUsersByIDs_Call struct {
+	*mock.Call
+}
+
+// GetUsersByIDs is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userIDs []uint32
+func (_e *MockUserService_Expecter) GetUsersByIDs(ctx interface{}, userIDs interface{}) *MockUserService_GetUsersByIDs_Call {
+	return &MockUserService_GetUsersByIDs_Call{Call: _e.mock.On("GetUsersByIDs", ctx, userIDs)}
+}
+
+func (_c *MockUserService_GetUsersByIDs_Call) Run(run func(ctx context.Context, userIDs []uint32)) *MockUserService_GetUsersByIDs_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []uint32
+		if args[1] != nil {
+			arg1 = args[1].([]uint32)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUserService_GetUsersByIDs_Call) Return(users []*domain.User, err error) *MockUserService_GetUsersByIDs_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockUserService_GetUsersByIDs_Call) RunAndReturn(run func(ctx context.Context, userIDs []uint32) ([]*domain.User, error)) *MockUserService_GetUsersByIDs_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchUsers provides a mock function for the type MockUserService
+func (_mock *MockUserService) SearchUsers(ctx context.Context, query string, userIDs []uint32) ([]*domain.User, error) {
+	ret := _mock.Called(ctx, query, userIDs)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchUsers")
+	}
+
+	var r0 []*domain.User
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32) ([]*domain.User, error)); ok {
+		return returnFunc(ctx, query, userIDs)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32) []*domain.User); ok {
+		r0 = returnFunc(ctx, query, userIDs)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, []uint32) error); ok {
+		r1 = returnFunc(ctx, query, userIDs)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockUserService_SearchUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchUsers'
+type MockUserService_SearchUsers_Call struct {
+	*mock.Call
+}
+
+// SearchUsers is a helper method to define mock.On call
+//   - ctx context.Context
+//   - query string
+//   - userIDs []uint32
+func (_e *MockUserService_Expecter) SearchUsers(ctx interface{}, query interface{}, userIDs interface{}) *MockUserService_SearchUsers_Call {
+	return &MockUserService_SearchUsers_Call{Call: _e.mock.On("SearchUsers", ctx, query, userIDs)}
+}
+
+func (_c *MockUserService_SearchUsers_Call) Run(run func(ctx context.Context, query string, userIDs []uint32)) *MockUserService_SearchUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 []uint32
+		if args[2] != nil {
+			arg2 = args[2].([]uint32)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUserService_SearchUsers_Call) Return(users []*domain.User, err error) *MockUserService_SearchUsers_Call {
+	_c.Call.Return(users, err)
+	return _c
+}
+
+func (_c *MockUserService_SearchUsers_Call) RunAndReturn(run func(ctx context.Context, query string, userIDs []uint32) ([]*domain.User, error)) *MockUserService_SearchUsers_Call {
+	_c.Call.Return(run)
+	return _c
 }

@@ -1,11 +1,20 @@
 package ports
 
-import "github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+import (
+	userpb "github.com/Yusufdot101/ripple-proto/golang/user/v4"
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+)
 
 type ChatService interface {
 	NewChatWithParticipants(createChatRequest domain.CreateChatWithParticipantsRequestType) (*domain.Chat, error)
-	GetChatParticipants(chatID uint) ([]*domain.ChatParticipant, error)
+	GetChatParticipants(chatID, currentUserID uint) ([]*domain.ChatParticipant, error)
+	GetChatUsers(chatID, currentUserID uint) ([]*userpb.User, error)
+	GetChatsByUserID(userID uint) ([]*domain.Chat, error)
+	SearchUsers(query string, ids []uint) ([]*userpb.User, error)
+	GetContacts(uint, []uint, string) ([]*userpb.User, error)
+
 	GetChatByUserIDs(userIDs []uint) (*domain.Chat, error)
+	GetChatByID(chatID, currentUserID uint) (*domain.Chat, error)
 	NewMessage(userID, chatID uint, content string) (*domain.Message, error)
 	GetMessages(chatID uint) ([]*domain.Message, error)
 	DeleteMessage(userID, messageID uint) (uint, error)

@@ -3,18 +3,18 @@ import { UserType } from "@/utils/users";
 interface Props {
     activeUsers: number[];
     user: UserType;
-    handleClick: (userID: number) => void;
+    handleClick: (user: UserType) => void;
 }
 
 const UserCard = ({ activeUsers, user, handleClick }: Props) => {
     return (
         <div
             tabIndex={0}
-            onClick={() => handleClick(user.id)}
+            onClick={() => handleClick(user)}
             className={`${activeUsers?.includes(user.id) ? "bg-foreground/20" : ""} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    handleClick(user.id);
+                    handleClick(user);
                 }
             }}
         >

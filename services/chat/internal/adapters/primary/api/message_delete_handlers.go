@@ -39,7 +39,7 @@ func (h *handler) deleteMessage(ctx *gin.Context) {
 	})
 
 	// broadcast to all the connections
-	participants, err := h.csvc.GetChatParticipants(chatID)
+	participants, err := h.csvc.GetChatParticipants(chatID, currentUserID)
 	if err != nil {
 		// deletion succeeded; log and continue without broadcast
 		log.Printf("deleteMessage: get participants for chat %d failed: %v", chatID, err)

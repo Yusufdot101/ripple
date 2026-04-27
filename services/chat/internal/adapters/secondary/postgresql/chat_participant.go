@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
@@ -33,18 +34,26 @@ func (a *Adapter) InsertChatParticipant(chatParticipant *domain.ChatParticipant)
 	return res.Error
 }
 
-func (a *Adapter) GetChatUsers(chatID uint) ([]*domain.ChatParticipant, error) {
+func (a *Adapter) GetChatUsers(chatID, currentUserID uint) ([]*domain.ChatParticipant, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var chatParticipantModels []*ChatParticipant
-	res := a.db.WithContext(ctx).
-		Where("chat_id = ?", chatID).
-		Order("id ASC").
-		Find(&chatParticipantModels)
+	// check user is in the chat
+	err := a.db.WithContext(ctx).
+		Where("chat_id = ? AND user_id = ?", chatID, currentUserID).
+		Find(&ChatParticipant{}).
+		Error
+	if err != nil {
+		return nil, errors.New("not in chat")
+	}
 
-	if res.Error != nil {
-		return nil, res.Error
+	// get the chat users
+	chatParticipantModels := []*ChatParticipant{}
+	err = a.db.WithContext(ctx).
+		Where("chat_participants.chat_id = ?", chatID).
+		Find(&chatParticipantModels).Error
+	if err != nil {
+		return nil, err
 	}
 
 	chatParticipants := []*domain.ChatParticipant{}

@@ -5,9 +5,13 @@ import { useState } from "react";
 
 interface Props {
     handleEnter: (email: string) => void;
+    placeholder?: string;
 }
 
-const SearchBar = ({ handleEnter }: Props) => {
+const SearchBar = ({
+    handleEnter,
+    placeholder = "Search on start new chat",
+}: Props) => {
     const [value, setValue] = useState("");
     return (
         <div
@@ -32,7 +36,7 @@ const SearchBar = ({ handleEnter }: Props) => {
 
             <input
                 type="text"
-                placeholder="Search or start new chat"
+                placeholder={placeholder}
                 className="border-none outline-none h-full w-full"
                 value={value}
                 onChange={(e) => {

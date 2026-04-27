@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/Yusufdot101/ripple-proto/golang/user"
+	userpb "github.com/Yusufdot101/ripple-proto/golang/user/v4"
 	"github.com/Yusufdot101/ripple/services/user/config"
 	"github.com/Yusufdot101/ripple/services/user/internal/ports"
 	"google.golang.org/grpc"
@@ -13,15 +13,17 @@ import (
 )
 
 type Adapter struct {
-	user.UnimplementedUserServiceServer
+	userpb.UnimplementedUserServiceServer
 	port int
 	asvc ports.AuthService
+	usvc ports.UserService
 }
 
-func NewAdapter(port int, asvc ports.AuthService) *Adapter {
+func NewAdapter(port int, asvc ports.AuthService, usvc ports.UserService) *Adapter {
 	return &Adapter{
 		port: port,
 		asvc: asvc,
+		usvc: usvc,
 	}
 }
 
@@ -32,7 +34,7 @@ func (a *Adapter) Run() error {
 	}
 
 	grpcServer := grpc.NewServer()
-	user.RegisterUserServiceServer(grpcServer, a)
+	userpb.RegisterUserServiceServer(grpcServer, a)
 	if config.GetEnv() == "development" {
 		reflection.Register(grpcServer)
 	}

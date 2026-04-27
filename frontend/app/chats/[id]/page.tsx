@@ -4,7 +4,9 @@ import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 import { useAuthStore } from "@/store/useAuthStore";
 import { BASE_CHAT_SERVICE_API_URL } from "@/utils/api";
+import { ChatType, getChatByID, getChatUsers } from "@/utils/chats";
 import { getChatMessages, MessageType } from "@/utils/messages";
+import { UserType } from "@/utils/users";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -12,6 +14,8 @@ const ChatPage = () => {
     const params = useParams();
     const chatID = params.id;
     const [messages, setMessages] = useState<MessageType[]>([]);
+    const [chat, setChat] = useState<ChatType>();
+    const [chatUsers, setChatUsers] = useState<UserType[]>([]);
     const socketRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -19,6 +23,12 @@ const ChatPage = () => {
         (async () => {
             const messages = await getChatMessages(+chatID);
             setMessages(messages);
+            const chat = await getChatByID(+chatID);
+            setChat(chat);
+
+            const chatUsers = await getChatUsers(+chatID);
+            if (!chatUsers) return;
+            setChatUsers(chatUsers);
         })();
     }, [chatID]);
 
@@ -104,6 +114,8 @@ const ChatPage = () => {
     const [editingMessageID, setEditingMessageID] = useState<number>();
 
     const router = useRouter();
+
+    const loggedInUserID = useAuthStore((state) => state.userID);
     return (
         <div
             ref={containerRef}
@@ -124,7 +136,17 @@ const ChatPage = () => {
                     text="Chat"
                 />
             </div>
-            <div className="flex justify-center shrink-0">Username/email</div>
+            <div className="flex justify-center shrink-0">
+                <div className="flex gap-x-[4px]">
+                    {chat?.Name !== ""
+                        ? chat?.Name
+                        : chatUsers
+                              .filter((user) => user.id !== loggedInUserID)
+                              .map((user) => (
+                                  <div key={user.id}>{user.name}</div>
+                              ))}
+                </div>
+            </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-y-[8px] p-[4px]">
                 {messages?.map((message) => (

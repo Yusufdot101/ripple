@@ -8,19 +8,20 @@ import (
 	"strings"
 	"time"
 
+	userpb "github.com/Yusufdot101/ripple-proto/golang/user/v4"
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
 	"github.com/Yusufdot101/ripple/services/chat/internal/ports"
 )
 
 type ChatService struct {
-	repo         ports.Repository
-	userVerifier ports.UserVerifier
+	repo        ports.Repository
+	userService ports.UserService
 }
 
-func NewChatService(repo ports.Repository, userVerifier ports.UserVerifier) *ChatService {
+func NewChatService(repo ports.Repository, userService ports.UserService) *ChatService {
 	return &ChatService{
-		repo:         repo,
-		userVerifier: userVerifier,
+		repo:        repo,
+		userService: userService,
 	}
 }
 
@@ -31,7 +32,7 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 	userIDs := slices.Collect(maps.Keys(createChatRequest.UserRoles))
 
 	// verify the users actually exist
-	valid, err := csvc.userVerifier.VerifyUsers(ctx, userIDs)
+	valid, err := csvc.userService.VerifyUsers(ctx, userIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +122,56 @@ func (csvc *ChatService) GetChatByUserIDs(userIDs []uint) (*domain.Chat, error) 
 	return csvc.repo.GetChatByParticipantIDs(userIDs)
 }
 
-func (csvc *ChatService) GetChatParticipants(chatID uint) ([]*domain.ChatParticipant, error) {
-	return csvc.repo.GetChatUsers(chatID)
+func (csvc *ChatService) GetChatsByUserID(userID uint) ([]*domain.Chat, error) {
+	return csvc.repo.GetChatsByUserID(userID)
+}
+
+func (csvc *ChatService) GetChatByID(chatID, currentUserID uint) (*domain.Chat, error) {
+	return csvc.repo.GetChatByID(chatID, currentUserID)
+}
+
+func (csvc *ChatService) GetChatParticipants(chatID, currentUserID uint) ([]*domain.ChatParticipant, error) {
+	return csvc.repo.GetChatUsers(chatID, currentUserID)
+}
+
+func (csvc *ChatService) GetChatUsers(chatID, currentUserID uint) ([]*userpb.User, error) {
+	chatParticipants, err := csvc.GetChatParticipants(chatID, currentUserID)
+	if err != nil {
+		return nil, err
+	}
+	userIDs := []uint{}
+	for _, user := range chatParticipants {
+		userIDs = append(userIDs, user.UserID)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	grpcUsers, err := csvc.userService.GetUsersByIDs(ctx, userIDs)
+	if err != nil {
+		return nil, err
+	}
+	return grpcUsers, nil
+}
+
+func (csvc *ChatService) SearchUsers(query string, ids []uint) ([]*userpb.User, error) {
+	ctx := context.Background()
+
+	grpcUsers, err := csvc.userService.SearchUsers(ctx, query, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	return grpcUsers, nil
+}
+
+func (csvc *ChatService) GetContacts(currentUserID uint, excludeIDs []uint, query string) ([]*userpb.User, error) {
+	ctx := context.Background()
+	grpcUsers, err := csvc.userService.GetContacts(ctx, query, excludeIDs, currentUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return grpcUsers, nil
 }
 
 func (csvc *ChatService) NewMessage(userID, chatID uint, content string) (*domain.Message, error) {

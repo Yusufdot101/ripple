@@ -1,11 +1,12 @@
 "use client";
 import Contacts from "@/components/Contacts";
-import { UserType } from "@/utils/users";
-import { useState } from "react";
+import { getUsersByEmail, UserType } from "@/utils/users";
+import { useEffect, useState } from "react";
 import BackArrowButton from "./BackArrowButton";
 import XButton from "./XButton";
 import { getChatByUserIDs } from "@/utils/chats";
 import { useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
 
 interface Props {
     handleClose: () => void;
@@ -26,6 +27,20 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
             return prev.filter((user) => user.id !== userID);
         });
     };
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [users, setUsers] = useState<UserType[]>([]);
+    const searchUsers = async (email: string = "") => {
+        setIsLoading(true);
+        const users = await getUsersByEmail(email);
+        setUsers(users);
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        searchUsers();
+    }, []);
 
     const [showConfigScreen, setShowConfigScreen] = useState(false);
     const [groupName, setGroupName] = useState("");
@@ -105,7 +120,14 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
                             ))}
                         </div>
                     )}
+
+                    <SearchBar
+                        placeholder="Search group members"
+                        handleEnter={searchUsers}
+                    />
                     <Contacts
+                        isLoading={isLoading}
+                        users={users}
                         handleUserClick={handleClick}
                         selectedUsers={selectedUsers.map((user) => user.id)}
                         excludeUsers={selectedUsers.map((user) => user.id)}

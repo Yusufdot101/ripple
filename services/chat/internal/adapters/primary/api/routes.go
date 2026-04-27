@@ -17,9 +17,12 @@ func (h *handler) RegisterRoutes() *gin.Engine {
 		AllowMethods:     []string{http.MethodPost, http.MethodGet, http.MethodDelete, http.MethodPatch},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 	}))
+
+	r.GET("/conversations", middleware.RequireAuthentication(h.getConversations))
 	group := r.Group("/chats")
-	// group.POST("", middleware.RequireAuthentication(h.NewChatWithParticipants))
 	group.POST("", middleware.RequireAuthentication(h.GetOrCreateChat))
+	group.GET("/:id", middleware.RequireAuthentication(h.getChatByID))
+	group.GET("/:id/users", middleware.RequireAuthentication(h.getChatUsers))
 
 	messageGroup := r.Group("/messages")
 	messageGroup.POST("", middleware.RequireAuthentication(h.getMessages))

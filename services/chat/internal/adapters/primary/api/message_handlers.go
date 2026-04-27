@@ -79,7 +79,7 @@ func (h *handler) handleMessage(conn *websocket.Conn, userID uint, msg struct {
 		return nil
 	}
 
-	participants, err := h.csvc.GetChatParticipants(msg.ChatID)
+	participants, err := h.csvc.GetChatParticipants(msg.ChatID, userID)
 	if err != nil {
 		_ = conn.WriteJSON(map[string]string{
 			"type":    "error",
@@ -126,7 +126,7 @@ func (h *handler) getMessages(ctx *gin.Context) {
 
 	// make sure the user is in the chat
 	currentUserID := context.UserIDFromContext(ctx)
-	participants, err := h.csvc.GetChatParticipants(GetMessagesRequest.ChatID)
+	participants, err := h.csvc.GetChatParticipants(GetMessagesRequest.ChatID, currentUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

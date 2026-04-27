@@ -1,54 +1,83 @@
 package api
 
 import (
-	"errors"
-	"maps"
 	"net/http"
-	"slices"
 
 	"github.com/Yusufdot101/ripple/services/chat/internal/adapters/primary/api/context"
 	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
 	"github.com/gin-gonic/gin"
 )
 
-func (h *handler) GetOrCreateChat(ctx *gin.Context) {
-	var createChatRequest domain.CreateChatWithParticipantsRequestType
-	if err := ctx.ShouldBind(&createChatRequest); err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
-	}
-	currentUserID := context.UserIDFromContext(ctx)
-	if createChatRequest.UserRoles == nil {
-		createChatRequest.UserRoles = make(map[uint]string)
-	}
+func (h *handler) getConversations(c *gin.Context) {
+	currentUserID := context.UserIDFromContext(c)
+	q := c.Query("q")
 
-	createChatRequest.UserRoles[currentUserID] = "admin"
-	if len(createChatRequest.UserRoles) < 2 {
-		ctx.String(http.StatusBadRequest, "at least 2 participants required")
-		return
-	}
-
-	userIDs := slices.Collect(maps.Keys(createChatRequest.UserRoles))
-	chat, err := h.csvc.GetChatByUserIDs(userIDs)
-	if err != nil && !errors.Is(err, domain.ErrRecordNotFound) {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+	chats, err := h.csvc.GetChatsByUserID(currentUserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	// create chat if not exists
-	if errors.Is(err, domain.ErrRecordNotFound) {
-		chat, err = h.csvc.NewChatWithParticipants(createChatRequest)
+	var groups, directChats []*domain.Chat
+	var otherUserIDs []uint
+
+	for _, chat := range chats {
+		members, err := h.csvc.GetChatParticipants(chat.ID, currentUserID)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
+			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
+
+		if len(members) > 2 {
+			groups = append(groups, chat)
+			continue
+		}
+
+		for _, m := range members {
+			if m.UserID != currentUserID {
+				directChats = append(directChats, chat)
+				otherUserIDs = append(otherUserIDs, m.UserID)
+			}
+		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"chat": chat,
+	// get the users in direct chats
+	matchedUsers, err := h.csvc.SearchUsers(q, otherUserIDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	userMatch := make(map[uint32]bool)
+	for _, u := range matchedUsers {
+		userMatch[u.Id] = true
+	}
+
+	var filteredChats []*domain.Chat
+	for i, chat := range directChats {
+		otherUserID := otherUserIDs[i]
+		if userMatch[uint32(otherUserID)] {
+			filteredChats = append(filteredChats, chat)
+		}
+	}
+
+	contacts, err := h.csvc.GetContacts(currentUserID, otherUserIDs, q)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Groups":   groups,
+		"Chats":    filteredChats,
+		"Contacts": contacts,
 	})
 }

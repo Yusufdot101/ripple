@@ -1,6 +1,8 @@
 package postgresql
 
-import "github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+import (
+	"github.com/Yusufdot101/ripple/services/chat/internal/application/core/domain"
+)
 
 func (rts *RepositoryTestSuite) TestNewRole() {
 	adapater, err := NewAdapter(rts.dataSourceURL)
@@ -22,7 +24,7 @@ func (rts *RepositoryTestSuite) TestNewChatRole() {
 	rts.Require().Nil(err)
 
 	// create chat
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
@@ -36,15 +38,15 @@ func (rts *RepositoryTestSuite) TestNewChatRoleFail() {
 	rts.Require().Nil(err)
 
 	// create chat
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
 	// invalid role id
 	chatRole := domain.NewChatRole(chat.ID)
-	err = adapater.NewChatRole(chatRole, domain.Admin)
+	err = adapater.NewChatRole(chatRole, domain.Member)
 	rts.Require().NotNil(err)
-	rts.Require().Equal(domain.ErrInvalidChatRole, err)
+	rts.Require().Equal(domain.ErrInvalidRole, err)
 }
 
 func (rts *RepositoryTestSuite) TestGrantChatRolePermission() {
@@ -57,7 +59,7 @@ func (rts *RepositoryTestSuite) TestGrantChatRolePermission() {
 	rts.Require().Nil(err)
 
 	// create chat
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
@@ -91,7 +93,7 @@ func (rts *RepositoryTestSuite) TestGrantUserChatRole() {
 	rts.Require().Nil(err)
 
 	// create chat
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
@@ -114,7 +116,7 @@ func (rts *RepositoryTestSuite) TestGrantUserRoleFail() {
 	rts.Require().Nil(err)
 
 	// create chat
-	chat := domain.NewChat()
+	chat := domain.NewChat("")
 	err = adapater.InsertChat(chat)
 	rts.Require().Nil(err)
 
