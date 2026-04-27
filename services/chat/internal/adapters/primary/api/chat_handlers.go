@@ -30,16 +30,21 @@ func (h *handler) GetOrCreateChat(ctx *gin.Context) {
 	}
 
 	userIDs := slices.Collect(maps.Keys(createChatRequest.UserRoles))
-	chat, err := h.csvc.GetChatByUserIDs(userIDs)
-	if err != nil && !errors.Is(err, domain.ErrRecordNotFound) {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
+	isGroupChat := len(userIDs) > 2
+	var chat *domain.Chat
+	var err error
+	if !isGroupChat {
+		chat, err = h.csvc.GetChatByUserIDs(userIDs)
+		if err != nil && !errors.Is(err, domain.ErrRecordNotFound) {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 	}
 
 	// create chat if not exists
-	if errors.Is(err, domain.ErrRecordNotFound) {
+	if errors.Is(err, domain.ErrRecordNotFound) || isGroupChat {
 		chat, err = h.csvc.NewChatWithParticipants(createChatRequest)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -105,6 +110,12 @@ func (h *handler) getChatUsers(ctx *gin.Context) {
 
 	chatUsers, err := h.csvc.GetChatUsers(chatIDUint, currentUserID)
 	if err != nil {
+		if errors.Is(err, domain.ErrRecordNotFound) {
+			ctx.JSON(http.StatusForbidden, gin.H{
+				"error": "not a participant of this chat",
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

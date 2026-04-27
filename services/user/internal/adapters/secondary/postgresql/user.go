@@ -104,6 +104,10 @@ func (a *Adapter) FindUsersByEmail(email string) ([]*domain.User, error) {
 }
 
 func (a *Adapter) SearchUsers(ctx context.Context, query string, ids []uint32) ([]*domain.User, error) {
+	if len(ids) == 0 {
+		return []*domain.User{}, nil
+	}
+
 	var userModels []User
 	var res *gorm.DB
 	if query == "" {
@@ -140,7 +144,9 @@ func (a *Adapter) GetContacts(ctx context.Context, query string, excludeIds []ui
 	if len(excludeIds) > 0 {
 		tx = tx.Where("id NOT IN ?", excludeIds)
 	}
-	tx.Find(&userModels)
+	if err := tx.Find(&userModels).Error; err != nil {
+		return nil, err
+	}
 
 	users := []*domain.User{}
 	for _, userModel := range userModels {

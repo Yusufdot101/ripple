@@ -1421,8 +1421,8 @@ func (_m *MockUserService) EXPECT() *MockUserService_Expecter {
 }
 
 // GetContacts provides a mock function for the type MockUserService
-func (_mock *MockUserService) GetContacts(query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error) {
-	ret := _mock.Called(query, excludeIDs, currentUserID)
+func (_mock *MockUserService) GetContacts(ctx context.Context, query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error) {
+	ret := _mock.Called(ctx, query, excludeIDs, currentUserID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetContacts")
@@ -1430,18 +1430,18 @@ func (_mock *MockUserService) GetContacts(query string, excludeIDs []uint32, cur
 
 	var r0 []*domain.User
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, []uint32, uint32) ([]*domain.User, error)); ok {
-		return returnFunc(query, excludeIDs, currentUserID)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32, uint32) ([]*domain.User, error)); ok {
+		return returnFunc(ctx, query, excludeIDs, currentUserID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string, []uint32, uint32) []*domain.User); ok {
-		r0 = returnFunc(query, excludeIDs, currentUserID)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, []uint32, uint32) []*domain.User); ok {
+		r0 = returnFunc(ctx, query, excludeIDs, currentUserID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.User)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(string, []uint32, uint32) error); ok {
-		r1 = returnFunc(query, excludeIDs, currentUserID)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, []uint32, uint32) error); ok {
+		r1 = returnFunc(ctx, query, excludeIDs, currentUserID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1454,31 +1454,37 @@ type MockUserService_GetContacts_Call struct {
 }
 
 // GetContacts is a helper method to define mock.On call
+//   - ctx context.Context
 //   - query string
 //   - excludeIDs []uint32
 //   - currentUserID uint32
-func (_e *MockUserService_Expecter) GetContacts(query interface{}, excludeIDs interface{}, currentUserID interface{}) *MockUserService_GetContacts_Call {
-	return &MockUserService_GetContacts_Call{Call: _e.mock.On("GetContacts", query, excludeIDs, currentUserID)}
+func (_e *MockUserService_Expecter) GetContacts(ctx interface{}, query interface{}, excludeIDs interface{}, currentUserID interface{}) *MockUserService_GetContacts_Call {
+	return &MockUserService_GetContacts_Call{Call: _e.mock.On("GetContacts", ctx, query, excludeIDs, currentUserID)}
 }
 
-func (_c *MockUserService_GetContacts_Call) Run(run func(query string, excludeIDs []uint32, currentUserID uint32)) *MockUserService_GetContacts_Call {
+func (_c *MockUserService_GetContacts_Call) Run(run func(ctx context.Context, query string, excludeIDs []uint32, currentUserID uint32)) *MockUserService_GetContacts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(context.Context)
 		}
-		var arg1 []uint32
+		var arg1 string
 		if args[1] != nil {
-			arg1 = args[1].([]uint32)
+			arg1 = args[1].(string)
 		}
-		var arg2 uint32
+		var arg2 []uint32
 		if args[2] != nil {
-			arg2 = args[2].(uint32)
+			arg2 = args[2].([]uint32)
+		}
+		var arg3 uint32
+		if args[3] != nil {
+			arg3 = args[3].(uint32)
 		}
 		run(
 			arg0,
 			arg1,
 			arg2,
+			arg3,
 		)
 	})
 	return _c
@@ -1489,7 +1495,7 @@ func (_c *MockUserService_GetContacts_Call) Return(users []*domain.User, err err
 	return _c
 }
 
-func (_c *MockUserService_GetContacts_Call) RunAndReturn(run func(query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error)) *MockUserService_GetContacts_Call {
+func (_c *MockUserService_GetContacts_Call) RunAndReturn(run func(ctx context.Context, query string, excludeIDs []uint32, currentUserID uint32) ([]*domain.User, error)) *MockUserService_GetContacts_Call {
 	_c.Call.Return(run)
 	return _c
 }

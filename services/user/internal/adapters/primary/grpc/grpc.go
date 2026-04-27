@@ -49,7 +49,7 @@ func (a *Adapter) GetUsers(ctx context.Context, req *userpb.GetUsersRequest) (*u
 			Name:     user.Name,
 			Id:       uint32(user.ID),
 			Sub:      user.Sub,
-			Provider: user.Sub,
+			Provider: user.Provider,
 			Email:    user.Email,
 		})
 	}
@@ -71,7 +71,7 @@ func (a *Adapter) SearchUsers(ctx context.Context, req *userpb.SearchUsersReques
 			Name:     user.Name,
 			Id:       uint32(user.ID),
 			Sub:      user.Sub,
-			Provider: user.Sub,
+			Provider: user.Provider,
 		})
 	}
 
@@ -91,7 +91,7 @@ func (a *Adapter) GetContacts(ctx context.Context, req *userpb.GetContactsReques
 			Name:     user.Name,
 			Id:       uint32(user.ID),
 			Sub:      user.Sub,
-			Provider: user.Sub,
+			Provider: user.Provider,
 			Email:    user.Email,
 		})
 	}

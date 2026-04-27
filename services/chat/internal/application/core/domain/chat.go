@@ -7,8 +7,8 @@ type CreateChatWithParticipantsRequestType struct {
 }
 
 type Chat struct {
-	Name string
-	ID   uint
+	Name string `json:"name"`
+	ID   uint   `json:"id"`
 }
 
 func NewChat(name string) *Chat {

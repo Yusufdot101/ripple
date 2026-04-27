@@ -8,6 +8,7 @@ import (
 type ChatService interface {
 	NewChatWithParticipants(createChatRequest domain.CreateChatWithParticipantsRequestType) (*domain.Chat, error)
 	GetChatParticipants(chatID, currentUserID uint) ([]*domain.ChatParticipant, error)
+	GetParticipantsByChatIDs(chatIDs []uint) (map[uint][]domain.ChatParticipant, error)
 	GetChatUsers(chatID, currentUserID uint) ([]*userpb.User, error)
 	GetChatsByUserID(userID uint) ([]*domain.Chat, error)
 	SearchUsers(query string, ids []uint) ([]*userpb.User, error)

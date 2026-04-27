@@ -79,7 +79,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
             groupName,
         );
         if (!chat) return;
-        router.push(`/chats/${chat.ID}`);
+        router.push(`/chats/${chat.id}`);
         handleClose();
     };
 

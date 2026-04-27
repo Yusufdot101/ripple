@@ -25,7 +25,7 @@ const Sidebar = () => {
         setActiveChat(-1);
         const chat = await getChatByUserIDs([user.id]);
         if (!chat) return;
-        router.push(`/chats/${chat.ID}`);
+        router.push(`/chats/${chat.id}`);
     };
 
     const handleChatClick = async (chatID: number) => {

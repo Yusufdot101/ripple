@@ -11,7 +11,8 @@ func UserIDFromContext(ctx *gin.Context) uint {
 	if !ok {
 		panic("user id missing")
 	}
-	currentUserIDint, err := strconv.Atoi(currentUserID)
+
+	currentUserIDint, err := strconv.ParseUint(currentUserID, 10, 32)
 	if err != nil {
 		panic("invalid user id type")
 	}

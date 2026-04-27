@@ -31,7 +31,7 @@ const Chats = ({ selectedChats, handleChatClick, chats, isLoading }: Props) => {
                     <ChatCard
                         handleClick={handleChatClick}
                         activeChats={selectedChats}
-                        key={chat.ID}
+                        key={chat.id}
                         chat={chat}
                     />
                 ))}

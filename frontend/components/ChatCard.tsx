@@ -13,31 +13,37 @@ interface Props {
 const ChatCard = ({ activeChats, chat, handleClick }: Props) => {
     const [chatUser, setChatUser] = useState<UserType>();
     const loggedInUserID = useAuthStore((state) => state.userID);
+
     useEffect(() => {
+        let cancelled = false;
         (async () => {
-            const chatUsers = await getChatUsers(+chat.ID);
+            const chatUsers = await getChatUsers(+chat.id);
             if (!chatUsers) return;
+            if (cancelled || !chatUsers || chatUsers.length === 0) return;
             setChatUser(
                 chatUsers[0].id === loggedInUserID
-                    ? chatUsers[1]
+                    ? (chatUsers[1] ?? chatUsers[0])
                     : chatUsers[0],
             );
         })();
-    }, [chat, loggedInUserID]);
+        return () => {
+            cancelled = true;
+        };
+    }, [chat.id, loggedInUserID]);
 
     return (
         <div
             tabIndex={0}
-            onClick={() => handleClick(chat.ID)}
-            className={`${activeChats?.includes(chat.ID) ? "bg-foreground/20" : ""} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
+            onClick={() => handleClick(chat.id)}
+            className={`${activeChats?.includes(chat.id) ? "bg-foreground/20" : ""} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    handleClick(chat.ID);
+                    handleClick(chat.id);
                 }
             }}
         >
-            {chat.Name ? (
-                <p className="min-[620px]:text-[20px]">{chat.Name}</p>
+            {chat.name ? (
+                <p className="min-[620px]:text-[20px]">{chat.name}</p>
             ) : (
                 <>
                     <p className="min-[620px]:text-[20px]">{chatUser?.name}</p>

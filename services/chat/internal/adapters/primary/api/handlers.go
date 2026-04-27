@@ -8,29 +8,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type DirectChat struct {
+	Chat        *domain.Chat
+	OtherUserID uint
+}
+
 func (h *handler) getConversations(c *gin.Context) {
 	currentUserID := context.UserIDFromContext(c)
 	q := c.Query("q")
 
+	// 1. get all chats
 	chats, err := h.csvc.GetChatsByUserID(currentUserID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var groups, directChats []*domain.Chat
+	chatIDs := make([]uint, 0, len(chats))
+	for _, ch := range chats {
+		chatIDs = append(chatIDs, ch.ID)
+	}
+
+	// 2. batch load participants (NO N+1)
+	participantsByChat, err := h.csvc.GetParticipantsByChatIDs(chatIDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var groups []*domain.Chat
+	var directChats []DirectChat
 	var otherUserIDs []uint
 
+	// 3. classify in memory
 	for _, chat := range chats {
-		members, err := h.csvc.GetChatParticipants(chat.ID, currentUserID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+		members := participantsByChat[chat.ID]
 
 		if len(members) > 2 {
 			groups = append(groups, chat)
@@ -39,39 +51,40 @@ func (h *handler) getConversations(c *gin.Context) {
 
 		for _, m := range members {
 			if m.UserID != currentUserID {
-				directChats = append(directChats, chat)
+				directChats = append(directChats, DirectChat{
+					Chat:        chat,
+					OtherUserID: m.UserID,
+				})
 				otherUserIDs = append(otherUserIDs, m.UserID)
 			}
 		}
 	}
 
-	// get the users in direct chats
-	matchedUsers, err := h.csvc.SearchUsers(q, otherUserIDs)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
+	// 4. search matched users
 	userMatch := make(map[uint32]bool)
-	for _, u := range matchedUsers {
-		userMatch[u.Id] = true
-	}
-
-	var filteredChats []*domain.Chat
-	for i, chat := range directChats {
-		otherUserID := otherUserIDs[i]
-		if userMatch[uint32(otherUserID)] {
-			filteredChats = append(filteredChats, chat)
+	if len(otherUserIDs) > 0 {
+		matchedUsers, err := h.csvc.SearchUsers(q, otherUserIDs)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		for _, u := range matchedUsers {
+			userMatch[u.Id] = true
 		}
 	}
 
+	// 5. filter chats safely
+	var filteredChats []*domain.Chat
+	for _, dc := range directChats {
+		if userMatch[uint32(dc.OtherUserID)] {
+			filteredChats = append(filteredChats, dc.Chat)
+		}
+	}
+
+	// 6. contacts (unchanged logic)
 	contacts, err := h.csvc.GetContacts(currentUserID, otherUserIDs, q)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

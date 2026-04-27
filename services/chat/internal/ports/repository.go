@@ -7,6 +7,7 @@ type Repository interface {
 	InsertChatParticipant(*domain.ChatParticipant) error
 	GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, error)
 	GetChatUsers(chatID, currentUser uint) ([]*domain.ChatParticipant, error)
+	GetParticipantsByChatIDs(chatIDs []uint) (map[uint][]domain.ChatParticipant, error)
 	GetChatByID(chatID, currentUser uint) (*domain.Chat, error)
 	WithTx(fn func(repo Repository) error) error
 

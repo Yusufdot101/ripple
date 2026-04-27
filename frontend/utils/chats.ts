@@ -2,8 +2,8 @@ import { api, BASE_CHAT_SERVICE_API_URL } from "./api";
 import { UserType } from "./users";
 
 export interface ChatType {
-    ID: number;
-    Name: string;
+    id: number;
+    name: string;
 }
 
 export const getChatByUserIDs = async (
@@ -103,7 +103,7 @@ export const getConversations = async (
 ): Promise<ConversationDataType | undefined> => {
     try {
         const res = await api(
-            `${BASE_CHAT_SERVICE_API_URL}/conversations?q=${query}`,
+            `${BASE_CHAT_SERVICE_API_URL}/conversations?q=${encodeURIComponent(query)}`,
         );
         if (!res) return;
         const data = await res.json();

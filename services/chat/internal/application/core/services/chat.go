@@ -134,6 +134,10 @@ func (csvc *ChatService) GetChatParticipants(chatID, currentUserID uint) ([]*dom
 	return csvc.repo.GetChatUsers(chatID, currentUserID)
 }
 
+func (csvc *ChatService) GetParticipantsByChatIDs(chatIDs []uint) (map[uint][]domain.ChatParticipant, error) {
+	return csvc.repo.GetParticipantsByChatIDs(chatIDs)
+}
+
 func (csvc *ChatService) GetChatUsers(chatID, currentUserID uint) ([]*userpb.User, error) {
 	chatParticipants, err := csvc.GetChatParticipants(chatID, currentUserID)
 	if err != nil {
@@ -154,7 +158,8 @@ func (csvc *ChatService) GetChatUsers(chatID, currentUserID uint) ([]*userpb.Use
 }
 
 func (csvc *ChatService) SearchUsers(query string, ids []uint) ([]*userpb.User, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	grpcUsers, err := csvc.userService.SearchUsers(ctx, query, ids)
 	if err != nil {
