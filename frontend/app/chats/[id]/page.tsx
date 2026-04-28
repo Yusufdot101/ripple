@@ -42,14 +42,20 @@ const ChatPage = () => {
 
     const manualClose = useRef(false);
     const retry = useRef(1);
+    const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const closeSocket = useCallback(() => {
         console.log("closed");
         manualClose.current = true;
+        if (reconnectTimer.current) {
+            clearTimeout(reconnectTimer.current);
+            reconnectTimer.current = null;
+        }
         socketRef.current?.close();
     }, []);
 
     const connect = useCallback(
         function run() {
+            manualClose.current = false;
             if (!accessToken || !chatID || !BASE_CHAT_SERVICE_API_URL) return;
             const wsUrl = new URL(BASE_CHAT_SERVICE_API_URL);
             wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
@@ -59,7 +65,7 @@ const ChatPage = () => {
             socketRef.current = socket;
 
             socket.onopen = async () => {
-                console.log("connected");
+                retry.current = 1;
                 socket.send(
                     JSON.stringify({
                         token: accessToken,
@@ -71,7 +77,13 @@ const ChatPage = () => {
                     +chatID,
                     lastMessage.ID,
                 );
-                setMessages((prev) => [...prev, ...missedMessages]);
+                setMessages((prev) => {
+                    const seen = new Set(prev.map((m) => m.ID));
+                    const uniqueMissed = missedMessages.filter(
+                        (m) => !seen.has(m.ID),
+                    );
+                    return [...prev, ...uniqueMissed];
+                });
             };
 
             socket.onmessage = (event) => {
@@ -109,15 +121,16 @@ const ChatPage = () => {
 
                 setMessages((prev) => {
                     if (!chatID) return prev;
-                    if ((data as MessageType).ChatID !== +chatID) return prev;
-                    return [...prev, data];
+                    const incoming = data as MessageType;
+                    if (incoming.ChatID !== +chatID) return prev;
+                    if (prev.some((m) => m.ID === incoming.ID)) return prev;
+                    return [...prev, incoming];
                 });
             };
 
             socket.onclose = () => {
                 if (manualClose.current === true) return;
-                setTimeout(() => {
-                    console.log("retrying");
+                reconnectTimer.current = setTimeout(() => {
                     run();
                 }, retry.current * 1000);
 
