@@ -14,8 +14,10 @@ import {
 import { UserType } from "@/utils/users";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 const ChatPage = () => {
+    const isOnline = useOnlineStatus();
     const newMessageID = (): string => {
         return crypto.randomUUID();
     };
@@ -282,7 +284,7 @@ const ChatPage = () => {
     return (
         <div
             ref={containerRef}
-            className="flex-1 min-h-0 flex flex-col gap-y-[8px]"
+            className="flex-1 min-h-0 flex flex-col gap-y-[8px] relative"
             onClick={() => {
                 setMenuIsOpen(false);
             }}
@@ -293,6 +295,11 @@ const ChatPage = () => {
                 setIsEditingMessage(false);
             }}
         >
+            <div
+                className={`${!isOnline ? "" : "opacity-0 invisible"} duration-300 right-1/2 translate-x-1/2 bg-red-500 p-[4px] rounded-[4px] absolute`}
+            >
+                <span className="text-[16px]">Currently offline</span>
+            </div>
             <div className="flex w-full h-[32px] gap-x-[8px] items-center">
                 <BackArrowButton
                     handleClick={() => router.back()}
