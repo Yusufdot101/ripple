@@ -20,14 +20,6 @@ const Sidebar = () => {
     const [activeChat, setActiveChat] = useState<number>();
     const router = useRouter();
 
-    const handleUserClick = async (user: UserType) => {
-        setActiveUser(user.id);
-        setActiveChat(-1);
-        const chat = await getChatByUserIDs([user.id]);
-        if (!chat) return;
-        router.push(`/chats/${chat.id}`);
-    };
-
     const handleChatClick = async (chatID: number) => {
         setActiveChat(chatID);
         setActiveUser(-1);
@@ -38,6 +30,28 @@ const Sidebar = () => {
 
     const [coversationData, setConverastionData] =
         useState<ConversationDataType>();
+
+    const handleUserClick = async (user: UserType) => {
+        setActiveUser(user.id);
+        setActiveChat(-1);
+        const chat = await getChatByUserIDs([user.id]);
+        if (!chat) return;
+        setConverastionData((prev) => {
+            return prev
+                ? {
+                      ...prev,
+                      Chats: [...(prev.Chats ?? []), chat],
+                      Contacts: [
+                          ...prev.Contacts.filter(
+                              (contact) => contact.id !== user.id,
+                          ),
+                      ],
+                  }
+                : prev;
+        });
+        setActiveChat(chat.id);
+        router.push(`/chats/${chat.id}`);
+    };
 
     const fetchData = async (query: string = "") => {
         setIsLoading(true);
