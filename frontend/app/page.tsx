@@ -11,6 +11,7 @@ const Home = () => {
             router.push("/chats");
         }
     }, [isLoggedIn, router]);
+
     return <div className="flex justify-center">Home</div>;
 };
 
