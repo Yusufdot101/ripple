@@ -5,6 +5,7 @@ import MessageInput, { WebsocketMsg } from "@/components/MessageInput";
 import { useAuthStore } from "@/store/useAuthStore";
 import { BASE_CHAT_SERVICE_API_URL } from "@/utils/api";
 import { ChatType, getChatByID, getChatUsers } from "@/utils/chats";
+import { messageStore } from "@/utils/messagesStore";
 import {
     getChatMessages,
     MessageType,
@@ -15,6 +16,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const ChatPage = () => {
+    const newMessageID = (): string => {
+        return crypto.randomUUID();
+    };
+
+    const newNumberID = (): number => {
+        return Math.floor(Math.random() * 100_000_000) + 1;
+    };
+
     const params = useParams();
     const chatID = params.id;
     const [messages, setMessages] = useState<MessageType[]>([]);
@@ -24,12 +33,37 @@ const ChatPage = () => {
     const [chatUsers, setChatUsers] = useState<UserType[]>([]);
     const socketRef = useRef<WebSocket | null>(null);
     const messagesContainer = useRef<HTMLDivElement | null>(null);
+    const loggedInUserID = useAuthStore((state) => state.userID);
 
     useEffect(() => {
         if (!chatID) return;
         (async () => {
             const messages = await getChatMessages(+chatID);
             setMessages(messages);
+
+            // add local messages
+            const savedMessages = await messageStore.getByChat(+chatID);
+            const queuedMessages = savedMessages.map((message, i) => ({
+                Content: message.content,
+                ChatID: message.chatID,
+                Status: message.status ?? "pending",
+                ClientID: message.clientID,
+                SenderID: message.senderID,
+                CreatedAt: message.CreatedAt ?? "",
+                Deleted: false,
+                ID: -(i + 1),
+                DeletedAt: null,
+                UpdatedAt: message.CreatedAt ?? "",
+            }));
+
+            for (const msg of savedMessages) {
+                if (msg.status === "pending") {
+                    pendingMessages.current.set(msg.clientID, msg);
+                }
+            }
+
+            setMessages((prev) => [...prev, ...queuedMessages]);
+
             const chat = await getChatByID(+chatID);
             setChat(chat);
 
@@ -128,8 +162,6 @@ const ChatPage = () => {
                 }
 
                 if (data.type === "nack") {
-                    pendingMessages.current.get(data.clientID)!.status =
-                        "failed";
                     setMessages((prev) =>
                         prev.map((message) =>
                             message.ClientID === data.clientID
@@ -137,11 +169,15 @@ const ChatPage = () => {
                                 : message,
                         ),
                     );
+                    const msg = pendingMessages.current.get(data.clientID);
+                    if (msg) {
+                        messageStore.update({ ...msg, status: "failed" });
+                    }
+                    pendingMessages.current.delete(data.clientID);
                     return;
                 }
 
                 if (data.type === "ack") {
-                    pendingMessages.current.delete(data.clientID);
                     setMessages((prev) =>
                         prev.map((message) =>
                             message.ClientID === data.clientID
@@ -149,6 +185,8 @@ const ChatPage = () => {
                                 : message,
                         ),
                     );
+                    pendingMessages.current.delete(data.clientID);
+                    messageStore.delete(data.clientID);
                     return;
                 }
                 setMessages((prev) => {
@@ -176,14 +214,6 @@ const ChatPage = () => {
         [accessToken, chatID],
     );
 
-    const newMessageID = (): string => {
-        return crypto.randomUUID();
-    };
-
-    const newNumberID = (): number => {
-        return Math.floor(Math.random() * 100_000_000) + 1;
-    };
-
     const sendMessage = (message: string) => {
         if (!chatID || message.trim() === "" || !loggedInUserID) return;
 
@@ -192,6 +222,7 @@ const ChatPage = () => {
 
         const clientID = newMessageID();
 
+        const creationDate = new Date().toISOString();
         const msg: WebsocketMsg = {
             status: "pending",
             chatID: +chatID,
@@ -199,19 +230,19 @@ const ChatPage = () => {
             clientID: clientID,
             content: message,
             type: "message",
+            CreatedAt: creationDate,
         };
 
         setMessages((prev) => {
             if (!chatID) return prev;
             const lastMessage = prev.at(-1);
-            const creationDate = new Date().toISOString();
             const newMessage: MessageType = {
                 ClientID: clientID,
                 Status: "pending",
                 ChatID: +chatID,
                 ID: lastMessage ? lastMessage.ID + 1 : newNumberID(),
-                Content: message,
-                CreatedAt: creationDate,
+                Content: msg.content,
+                CreatedAt: msg.CreatedAt ?? creationDate,
                 Deleted: false,
                 DeletedAt: null,
                 SenderID: loggedInUserID,
@@ -220,6 +251,7 @@ const ChatPage = () => {
             return [...prev, newMessage];
         });
         pendingMessages.current.set(clientID, msg);
+        messageStore.add(msg);
         socket.send(JSON.stringify(msg));
     };
 
@@ -248,7 +280,6 @@ const ChatPage = () => {
 
     const router = useRouter();
 
-    const loggedInUserID = useAuthStore((state) => state.userID);
     return (
         <div
             ref={containerRef}
@@ -285,28 +316,30 @@ const ChatPage = () => {
                 ref={messagesContainer}
                 className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-y-[8px] p-[4px]"
             >
-                {messages?.map((message) => (
-                    <Message
-                        containerRef={containerRef}
-                        menuIsOpen={menuIsOpen}
-                        selectedMessageID={selectedMessageID ?? -1}
-                        handleRightClick={(messageID: number) => {
-                            setMenuIsOpen(true);
-                            setSelectedMessageID(messageID);
-                        }}
-                        key={message.ID}
-                        message={message}
-                        editingMessageID={editingMessageID}
-                        isEditing={isEditingMessage}
-                        handleClickEdit={(messageID: number) => {
-                            setIsEditingMessage(true);
-                            setEditingMessageID(messageID);
-                        }}
-                        handleCancelMessageEdit={() =>
-                            setIsEditingMessage(false)
-                        }
-                    />
-                ))}
+                {messages
+                    .sort((a, b) => a.CreatedAt.localeCompare(b.CreatedAt))
+                    .map((message) => (
+                        <Message
+                            containerRef={containerRef}
+                            menuIsOpen={menuIsOpen}
+                            selectedMessageID={selectedMessageID ?? -1}
+                            handleRightClick={(messageID: number) => {
+                                setMenuIsOpen(true);
+                                setSelectedMessageID(messageID);
+                            }}
+                            key={message.ID}
+                            message={message}
+                            editingMessageID={editingMessageID}
+                            isEditing={isEditingMessage}
+                            handleClickEdit={(messageID: number) => {
+                                setIsEditingMessage(true);
+                                setEditingMessageID(messageID);
+                            }}
+                            handleCancelMessageEdit={() =>
+                                setIsEditingMessage(false)
+                            }
+                        />
+                    ))}
             </div>
 
             <MessageInput

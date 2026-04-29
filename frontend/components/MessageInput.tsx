@@ -13,7 +13,21 @@ export type WebsocketMsg = {
     chatID: number;
     type: string;
     content: string;
+    CreatedAt?: string;
 };
+
+export interface MessageType {
+    ClientID?: string;
+    ID: number;
+    ChatID: number;
+    SenderID: number;
+    Content: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    Deleted: boolean;
+    Status: "pending" | "delivered" | "failed";
+}
 
 const MessageInput = ({ handleSend }: Props) => {
     const [message, setMessage] = useState("");

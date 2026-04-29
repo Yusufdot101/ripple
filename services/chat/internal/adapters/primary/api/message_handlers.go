@@ -43,7 +43,7 @@ func (h *handler) readLoop(conn *websocket.Conn, userID uint) {
 	for {
 		var msg websocketMsg
 		if err := conn.ReadJSON(&msg); err != nil {
-			log.Println("err1", err)
+			log.Println("error: ", err)
 			break
 		}
 
