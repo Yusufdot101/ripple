@@ -84,7 +84,7 @@ const Message = ({
 
     return (
         <div
-            className={`${isEditingCurrentMessage ? "w-full" : ""} ${message.SenderID === userID ? "ml-auto" : "mr-auto"} flex flex-col rounded-[4px]`}
+            className={`${isEditingCurrentMessage ? "w-full" : ""} ${message.MessageType === "information message" ? "w-full" : message.SenderID === userID ? "ml-auto" : "mr-auto"} flex flex-col rounded-[4px]`}
             onKeyDown={(e) => {
                 if (e.key === "Escape") {
                     handleCancelMessageEdit();
@@ -117,7 +117,11 @@ const Message = ({
                 });
             }}
             onContextMenu={(e) => {
-                if (message.SenderID !== userID) return;
+                if (
+                    message.SenderID !== userID ||
+                    message.MessageType === "information message"
+                )
+                    return;
                 handleRightClick(message.ID);
                 e.preventDefault();
 
@@ -140,11 +144,13 @@ const Message = ({
             <div
                 tabIndex={0}
                 hidden={isEditingCurrentMessage}
-                className={`${message.SenderID === userID ? "bg-accent/80" : "bg-foreground/20"} flex flex-col w-fit py-[4px] px-[8px] rounded-[4px]`}
+                className={`${message.MessageType === "information message" ? "w-full bg-foreground/10 justify-center items-center" : message.SenderID === userID ? "bg-accent/80" : "bg-foreground/20"} flex flex-col w-fit py-[4px] px-[8px] rounded-[4px]`}
             >
-                {username && message.SenderID !== userID && (
-                    <span className="text-[12px]">{username}</span>
-                )}
+                {username &&
+                    message.SenderID !== userID &&
+                    message.MessageType !== "information message" && (
+                        <span className="text-[12px]">{username}</span>
+                    )}
                 {message.Deleted ? (
                     <div className="flex items-center gap-x-[4px]">
                         <svg

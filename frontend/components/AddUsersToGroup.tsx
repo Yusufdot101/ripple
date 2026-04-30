@@ -56,6 +56,7 @@ const AddUsersToGroup = ({
         await addUsersToGroup(
             chatID,
             selectedUsers.map((user) => user.id),
+            selectedUsers.map((user) => user.name),
         );
         handleClose();
     };

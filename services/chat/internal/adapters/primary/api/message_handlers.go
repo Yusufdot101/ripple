@@ -101,7 +101,7 @@ func (h *handler) handleMessage(conn *websocket.Conn, userID uint, msg websocket
 		return fmt.Errorf("user not in chat")
 	}
 
-	message, err := h.csvc.NewMessage(userID, msg.ChatID, msg.Content)
+	message, err := h.csvc.NewMessage(userID, msg.ChatID, msg.Content, domain.StandardMessage)
 	if err != nil {
 		_ = conn.WriteJSON(map[string]string{
 			"type":     "nack",

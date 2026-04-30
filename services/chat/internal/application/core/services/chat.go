@@ -191,8 +191,8 @@ func (csvc *ChatService) GetContacts(currentUserID uint, excludeIDs []uint, quer
 	return grpcUsers, nil
 }
 
-func (csvc *ChatService) NewMessage(userID, chatID uint, content string) (*domain.Message, error) {
-	message := domain.NewMessage(chatID, userID, content)
+func (csvc *ChatService) NewMessage(userID, chatID uint, content string, messageType domain.MessageType) (*domain.Message, error) {
+	message := domain.NewMessage(chatID, userID, content, messageType)
 	return message, csvc.repo.InsertMessage(message)
 }
 

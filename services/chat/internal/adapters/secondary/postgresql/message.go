@@ -11,23 +11,25 @@ import (
 )
 
 type Message struct {
-	ID        uint `gorm:"primarykey"`
-	ChatID    uint
-	SenderID  uint
-	Content   string
-	Deleted   bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-	Status    domain.MessageStatus
+	ID          uint `gorm:"primarykey"`
+	ChatID      uint
+	SenderID    uint
+	Content     string
+	Deleted     bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time
+	Status      domain.MessageStatus
+	MessageType domain.MessageType
 }
 
 func (a *Adapter) InsertMessage(message *domain.Message) error {
 	messageModel := &Message{
-		ChatID:   message.ChatID,
-		SenderID: message.SenderID,
-		Content:  message.Content,
-		Status:   domain.MessageDelivered,
+		ChatID:      message.ChatID,
+		SenderID:    message.SenderID,
+		Content:     message.Content,
+		Status:      domain.MessageDelivered,
+		MessageType: message.MessageType,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -63,15 +65,16 @@ func (a *Adapter) GetMessages(chatID uint, messageFilter domain.GetMessageFilter
 			status = domain.MessageDelivered
 		}
 		message := &domain.Message{
-			ID:        messageModel.ID,
-			ChatID:    messageModel.ChatID,
-			CreatedAt: messageModel.CreatedAt,
-			UpdatedAt: messageModel.UpdatedAt,
-			SenderID:  messageModel.SenderID,
-			Content:   messageModel.Content,
-			DeletedAt: messageModel.DeletedAt,
-			Deleted:   messageModel.Deleted,
-			Status:    status,
+			ID:          messageModel.ID,
+			ChatID:      messageModel.ChatID,
+			CreatedAt:   messageModel.CreatedAt,
+			UpdatedAt:   messageModel.UpdatedAt,
+			SenderID:    messageModel.SenderID,
+			Content:     messageModel.Content,
+			DeletedAt:   messageModel.DeletedAt,
+			Deleted:     messageModel.Deleted,
+			Status:      status,
+			MessageType: messageModel.MessageType,
 		}
 		messages = append(messages, message)
 	}
@@ -152,15 +155,16 @@ func (a *Adapter) EditMessage(userID, messageID uint, newContent string) (*domai
 	}
 
 	message := &domain.Message{
-		ID:        messageModel.ID,
-		Content:   messageModel.Content,
-		CreatedAt: messageModel.CreatedAt,
-		UpdatedAt: messageModel.UpdatedAt,
-		ChatID:    messageModel.ChatID,
-		SenderID:  messageModel.SenderID,
-		DeletedAt: messageModel.DeletedAt,
-		Deleted:   messageModel.Deleted,
-		Status:    messageModel.Status,
+		ID:          messageModel.ID,
+		Content:     messageModel.Content,
+		CreatedAt:   messageModel.CreatedAt,
+		UpdatedAt:   messageModel.UpdatedAt,
+		ChatID:      messageModel.ChatID,
+		SenderID:    messageModel.SenderID,
+		DeletedAt:   messageModel.DeletedAt,
+		Deleted:     messageModel.Deleted,
+		Status:      messageModel.Status,
+		MessageType: messageModel.MessageType,
 	}
 
 	return message, err
