@@ -47,10 +47,12 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
 
     const [memberPermissions, setMemberPermissions] = useState({
         "send message": true,
+        "add users to group": true,
     });
 
     const adminPermissions = {
         "send message": true,
+        "add users to group": true,
     };
 
     const router = useRouter();

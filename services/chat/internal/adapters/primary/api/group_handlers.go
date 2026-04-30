@@ -10,7 +10,7 @@ import (
 )
 
 var request struct {
-	UserID uint `json:"userID"`
+	UserIDs []uint `json:"userIDs"`
 }
 
 func (h *handler) addToGroup(c *gin.Context) {
@@ -22,7 +22,7 @@ func (h *handler) addToGroup(c *gin.Context) {
 	}
 	currentUserID := context.UserIDFromContext(c)
 
-	chatID, err := strconv.ParseUint(c.Query("chatId"), 10, strconv.IntSize)
+	chatID, err := strconv.ParseUint(c.Param("chatId"), 10, strconv.IntSize)
 	chatIDUint := uint(chatID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -46,7 +46,7 @@ func (h *handler) addToGroup(c *gin.Context) {
 		return
 	}
 
-	err = h.csvc.AddUserToGroup(chatIDUint, request.UserID)
+	err = h.csvc.AddUsersToGroup(chatIDUint, request.UserIDs)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -54,6 +54,6 @@ func (h *handler) addToGroup(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "user added to group",
+		"message": "users added to group",
 	})
 }

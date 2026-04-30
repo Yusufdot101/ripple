@@ -33,7 +33,7 @@ func (rts *RepositoryTestSuite) TestGetUserPermissions() {
 
 	// create chat participant
 	chatParticipant := domain.NewChatParticipant(1, chat.ID)
-	err = adapater.InsertChatParticipant(chatParticipant)
+	err = adapater.InsertChatParticipants([]*domain.ChatParticipant{chatParticipant})
 	rts.Nil(err)
 
 	// create chat role
@@ -46,7 +46,7 @@ func (rts *RepositoryTestSuite) TestGetUserPermissions() {
 	rts.Require().Nil(err)
 
 	// grant chat role to user
-	err = adapater.GrantUserChatRole(chatParticipant.UserID, chat.ID, role.Name)
+	err = adapater.GrantUsersChatRoles([]uint{chatParticipant.UserID}, chat.ID, role.Name)
 	rts.Require().Nil(err)
 
 	// get the permissions

@@ -75,6 +75,8 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 				switch permissionName {
 				case "send message":
 					permission = domain.SendMessage
+				case "add users to group":
+					permission = domain.AddToGroup
 				default:
 					return fmt.Errorf("%w: %s", domain.ErrInvalidPermission, permissionName)
 				}
@@ -87,28 +89,38 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 		}
 
 		// 4. create chat_users
+		participants := []*domain.ChatParticipant{}
 		for _, userID := range userIDs {
 			participant := domain.NewChatParticipant(uint(userID), chat.ID)
-			err = repo.InsertChatParticipant(participant)
-			if err != nil {
-				return err
-			}
+			participants = append(participants, participant)
+		}
+		err = repo.InsertChatParticipants(participants)
+		if err != nil {
+			return err
+		}
 
+		memberParticipants := []uint{}
+		adminParticipants := []uint{}
+		for _, userID := range userIDs {
 			// 5. grant role to users
-			var userRole domain.RoleType
 			roleName := createChatRequest.UserRoles[userID]
 			switch roleName {
 			case "member":
-				userRole = domain.Member
+				memberParticipants = append(memberParticipants, userID)
 			case "admin":
-				userRole = domain.Admin
+				adminParticipants = append(adminParticipants, userID)
 			default:
 				return fmt.Errorf("%w: %s", domain.ErrInvalidRole, roleName)
 			}
-			err = repo.GrantUserChatRole(participant.UserID, participant.ChatID, userRole)
-			if err != nil {
-				return err
-			}
+		}
+		err = repo.GrantUsersChatRoles(memberParticipants, chat.ID, domain.Member)
+		if err != nil {
+			return err
+		}
+
+		err = repo.GrantUsersChatRoles(adminParticipants, chat.ID, domain.Admin)
+		if err != nil {
+			return err
 		}
 		return nil
 	})
@@ -119,8 +131,8 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 	return chat, nil
 }
 
-func (csvc *ChatService) GetChatByUserIDs(userIDs []uint) (*domain.Chat, error) {
-	return csvc.repo.GetChatByParticipantIDs(userIDs)
+func (csvc *ChatService) GetChatByUserIDs(userIDs []uint, isGroup bool) (*domain.Chat, error) {
+	return csvc.repo.GetChatByParticipantIDs(userIDs, isGroup)
 }
 
 func (csvc *ChatService) GetChatsByUserID(userID uint, query string) ([]*domain.Chat, error) {
@@ -210,11 +222,18 @@ func (csvc *ChatService) UserHasPermission(userID, chatID uint, permissionName d
 	return p.IncludedIn(userPermissions), nil
 }
 
-func (csvc *ChatService) AddUserToGroup(chatID, userID uint) error {
-	chatParticipant := domain.NewChatParticipant(userID, chatID)
+func (csvc *ChatService) GetUserPermissions(chatID, userID uint) ([]*domain.Permission, error) {
+	return csvc.repo.GetUserPermissions(userID, chatID)
+}
+
+func (csvc *ChatService) AddUsersToGroup(chatID uint, userIDs []uint) error {
+	chatParticipants := []*domain.ChatParticipant{}
+	for _, userID := range userIDs {
+		chatParticipants = append(chatParticipants, domain.NewChatParticipant(userID, chatID))
+	}
 	return csvc.repo.WithTx(func(repo ports.Repository) error {
 		ctx := context.Background()
-		isValid, err := csvc.userService.VerifyUsers(ctx, []uint{userID})
+		isValid, err := csvc.userService.VerifyUsers(ctx, userIDs)
 		if err != nil {
 			return err
 		}
@@ -223,10 +242,10 @@ func (csvc *ChatService) AddUserToGroup(chatID, userID uint) error {
 			return errors.New("invalid user id")
 		}
 
-		err = repo.InsertChatParticipant(chatParticipant)
+		err = repo.InsertChatParticipants(chatParticipants)
 		if err != nil {
 			return err
 		}
-		return repo.GrantUserChatRole(userID, chatID, domain.Member)
+		return repo.GrantUsersChatRoles(userIDs, chatID, domain.Member)
 	})
 }

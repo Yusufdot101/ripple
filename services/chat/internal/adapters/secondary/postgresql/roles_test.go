@@ -104,10 +104,10 @@ func (rts *RepositoryTestSuite) TestGrantUserChatRole() {
 
 	// create chat participant
 	chatParticipant := domain.NewChatParticipant(1, chat.ID)
-	err = adapater.InsertChatParticipant(chatParticipant)
+	err = adapater.InsertChatParticipants([]*domain.ChatParticipant{chatParticipant})
 	rts.Nil(err)
 
-	err = adapater.GrantUserChatRole(chatParticipant.UserID, chat.ID, domain.Admin)
+	err = adapater.GrantUsersChatRoles([]uint{chatParticipant.UserID}, chat.ID, domain.Admin)
 	rts.Require().Nil(err)
 }
 
@@ -122,10 +122,10 @@ func (rts *RepositoryTestSuite) TestGrantUserRoleFail() {
 
 	// create chat participant
 	chatParticipant := domain.NewChatParticipant(1, chat.ID)
-	err = adapater.InsertChatParticipant(chatParticipant)
+	err = adapater.InsertChatParticipants([]*domain.ChatParticipant{chatParticipant})
 	rts.Nil(err)
 
 	// role not in the database, should error
-	err = adapater.GrantUserChatRole(chatParticipant.UserID, chat.ID, domain.Admin)
+	err = adapater.GrantUsersChatRoles([]uint{chatParticipant.UserID}, chat.ID, domain.Admin)
 	rts.Require().Equal(domain.ErrInvalidRole, err)
 }

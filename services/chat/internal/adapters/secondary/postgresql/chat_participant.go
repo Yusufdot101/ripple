@@ -15,20 +15,20 @@ type ChatParticipant struct {
 	ChatRoleID uint
 }
 
-func (a *Adapter) InsertChatParticipant(chatParticipant *domain.ChatParticipant) error {
-	chatParticipantModel := &ChatParticipant{
-		UserID:     chatParticipant.UserID,
-		ChatID:     chatParticipant.ChatID,
-		ChatRoleID: chatParticipant.ChatRoleID,
+func (a *Adapter) InsertChatParticipants(chatParticipants []*domain.ChatParticipant) error {
+	chatParticipantModels := []*ChatParticipant{}
+	for _, chatParticipant := range chatParticipants {
+		chatParticipantModels = append(chatParticipantModels, &ChatParticipant{
+			UserID:     chatParticipant.UserID,
+			ChatID:     chatParticipant.ChatID,
+			ChatRoleID: chatParticipant.ChatRoleID,
+		})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res := a.db.WithContext(ctx).Save(chatParticipantModel)
-	if res.Error == nil {
-		chatParticipant.ID = chatParticipantModel.ID
-	}
+	res := a.db.WithContext(ctx).Create(chatParticipantModels)
 
 	return res.Error
 }
@@ -77,7 +77,7 @@ func (a *Adapter) GetParticipantsByChatIDs(chatIDs []uint) (map[uint][]domain.Ch
 	chatUsersModels := []*ChatParticipant{}
 	err := a.db.WithContext(ctx).
 		Joins("JOIN chats ON chats.id = chat_participants.chat_id").
-		Where("chats.id IN ?", chatIDs).
+		Where("chats.id IN (?)", chatIDs).
 		Find(&chatUsersModels).Error
 	if err != nil {
 		return nil, err

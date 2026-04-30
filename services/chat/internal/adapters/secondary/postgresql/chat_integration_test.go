@@ -28,15 +28,12 @@ func (rts *RepositoryTestSuite) TestGetChatByParticipantIDs() {
 	userID2 := 2
 
 	participant1 := domain.NewChatParticipant(uint(userID1), chat.ID)
-	err = adapter.InsertChatParticipant(participant1)
-	rts.Require().Nil(err)
-
 	participant2 := domain.NewChatParticipant(uint(userID2), chat.ID)
-	err = adapter.InsertChatParticipant(participant2)
+	err = adapter.InsertChatParticipants([]*domain.ChatParticipant{participant1, participant2})
 	rts.Require().Nil(err)
 
 	// fetch the chat using those users' ids
-	gotChat, err := adapter.GetChatByParticipantIDs([]uint{participant1.ID, participant2.ID})
+	gotChat, err := adapter.GetChatByParticipantIDs([]uint{participant1.ID, participant2.ID}, false)
 	rts.Require().Nil(err)
 	rts.Require().Equal(chat.ID, gotChat.ID)
 }
@@ -60,11 +57,8 @@ func (rts *RepositoryTestSuite) TestGetChatsByUserID() {
 	userID := 1
 
 	participant1 := domain.NewChatParticipant(uint(userID), chat.ID)
-	err = adapter.InsertChatParticipant(participant1)
-	rts.Require().Nil(err)
-
 	participant2 := domain.NewChatParticipant(uint(userID), chat2.ID)
-	err = adapter.InsertChatParticipant(participant2)
+	err = adapter.InsertChatParticipants([]*domain.ChatParticipant{participant1, participant2})
 	rts.Require().Nil(err)
 
 	// fetch the chat using those users' ids

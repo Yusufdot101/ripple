@@ -94,7 +94,7 @@ func (a *Adapter) GrantChatRolePermission(chatRoleID uint, permission domain.Per
 	return err
 }
 
-func (a *Adapter) GrantUserChatRole(userID, chatID uint, roleName domain.RoleType) error {
+func (a *Adapter) GrantUsersChatRoles(userIDs []uint, chatID uint, roleName domain.RoleType) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -113,7 +113,7 @@ func (a *Adapter) GrantUserChatRole(userID, chatID uint, roleName domain.RoleTyp
 
 	res := a.db.WithContext(ctx).
 		Table("chat_participants AS cp").
-		Where("cp.user_id = ? AND cp.chat_id = ?", userID, chatID).
+		Where("cp.user_id IN (?) AND cp.chat_id = ?", userIDs, chatID).
 		Updates(map[string]any{
 			"chat_role_id": chatRoleModel.ID,
 		})

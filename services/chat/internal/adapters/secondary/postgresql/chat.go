@@ -92,7 +92,7 @@ func (a *Adapter) GetChatsByUserID(userID uint, query string) ([]*domain.Chat, e
 	return chats, nil
 }
 
-func (a *Adapter) GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, error) {
+func (a *Adapter) GetChatByParticipantIDs(participantIDs []uint, isGroup bool) (*domain.Chat, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -109,7 +109,7 @@ func (a *Adapter) GetChatByParticipantIDs(participantIDs []uint) (*domain.Chat, 
 		Having("SUM(CASE WHEN user_id IN (?) THEN 1 ELSE 0 END) = ?", participantIDs, participantCount)
 
 	res := a.db.WithContext(ctx).
-		Where("id IN (?)", subQuery).
+		Where("id IN (?) AND is_group = ?", subQuery, isGroup).
 		First(&chatModel)
 	if res.Error != nil {
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {

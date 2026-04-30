@@ -25,6 +25,7 @@ func (h *handler) RegisterRoutes() *gin.Engine {
 	group.GET("/:chatId", middleware.RequireAuthentication(h.getChatByID))
 	group.GET("/:chatId/users", middleware.RequireAuthentication(h.getChatUsers))
 	group.POST("/:chatId/addToGroup", middleware.RequireAuthentication(h.addToGroup))
+	group.GET("/:chatId/permissions", middleware.RequireAuthentication(h.getUserPermissions))
 
 	messageGroup := group.Group("/:chatId/messages")
 	messageGroup.GET("", middleware.RequireAuthentication(h.getMessages))

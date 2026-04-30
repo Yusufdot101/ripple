@@ -57,7 +57,6 @@ const Sidebar = () => {
         setIsLoading(true);
         const data = await getConversations(query);
         setIsLoading(false);
-        console.log("here: ", data);
         if (!data) return;
         setConverastionData(data);
     };

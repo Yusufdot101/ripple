@@ -15,6 +15,7 @@ import { UserType } from "@/utils/users";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import Menu from "@/components/Menu";
 
 const ChatPage = () => {
     const isOnline = useOnlineStatus();
@@ -296,15 +297,23 @@ const ChatPage = () => {
             }}
         >
             <div
-                className={`${isOnline ? "opacity-0 invisible" : ""} duration-300 right-1/2 translate-x-1/2 bg-red-500 p-[4px] rounded-[4px] absolute`}
+                className={`${isOnline ? "opacity-0 invisible" : "opacity-100"} duration-300 right-1/2 translate-x-1/2 bg-red-500 p-[4px] rounded-[4px] absolute`}
             >
                 <span className="text-[16px]">Currently offline</span>
             </div>
-            <div className="flex w-full h-[32px] gap-x-[8px] items-center min-[900px]:hidden">
-                <BackArrowButton
-                    handleClick={() => router.back()}
-                    text="Chat"
-                />
+            <div className="flex w-full justify-between">
+                <div className="flex w-full h-[32px] gap-x-[8px] items-center min-[900px]:hidden">
+                    <BackArrowButton
+                        handleClick={() => router.back()}
+                        text="Chat"
+                    />
+                </div>
+                <div className="flex-1">
+                    <Menu
+                        chatID={chatID ? +chatID : -1}
+                        currentGroupUsers={chatUsers.map((user) => user.id)}
+                    />
+                </div>
             </div>
             <div className="flex justify-center shrink-0">
                 <div className="flex gap-x-[4px]">

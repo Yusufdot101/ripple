@@ -33,7 +33,7 @@ func (h *handler) GetOrCreateChat(ctx *gin.Context) {
 	var chat *domain.Chat
 	var err error
 	if !createChatRequest.IsGroup {
-		chat, err = h.csvc.GetChatByUserIDs(userIDs)
+		chat, err = h.csvc.GetChatByUserIDs(userIDs, createChatRequest.IsGroup)
 		if err != nil && !errors.Is(err, domain.ErrRecordNotFound) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),

@@ -4,12 +4,12 @@ type PermissionType string
 
 var (
 	SendMessage PermissionType = "send message"
-	AddToGroup  PermissionType = "add to group"
+	AddToGroup  PermissionType = "add users to group"
 )
 
 type Permission struct {
-	ID   uint
-	Name PermissionType
+	ID   uint           `json:"id"`
+	Name PermissionType `json:"name"`
 }
 
 type RolePermission struct {
