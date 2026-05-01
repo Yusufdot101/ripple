@@ -141,6 +141,9 @@ func (h *handler) removeFromGroup(c *gin.Context) {
 	// get the chat members before removing the user to avoid not found error, as the user wont be allowed if he is not in the chat
 	participants, err := h.csvc.GetChatParticipants(chatIDUint, currentUserID)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get chat participants",
+		})
 		log.Printf("error getting chat participants: %v\n", err)
 		return
 	}
@@ -163,7 +166,7 @@ func (h *handler) removeFromGroup(c *gin.Context) {
 		return
 	}
 	if (len(users) != 2 && currentUserID != userIDUint) || (len(users) != 1 && currentUserID == userIDUint) {
-		log.Printf("current user not found: %d\n", currentUserID)
+		log.Printf("user not found: %d\n", currentUserID)
 		return
 	}
 
@@ -171,8 +174,18 @@ func (h *handler) removeFromGroup(c *gin.Context) {
 	if currentUserID == userIDUint {
 		content = fmt.Sprintf("%s left the group", users[0].Name)
 	} else {
-		content = fmt.Sprintf("%s removed %s", users[0].Name, users[1].Name)
+		var actorName, targetName string
+		for _, user := range users {
+			if user.Id == uint32(currentUserID) {
+				actorName = user.Name
+			}
+			if user.Id == uint32(userIDUint) {
+				targetName = user.Name
+			}
+		}
+		content = fmt.Sprintf("%s removed %s", actorName, targetName)
 	}
+
 	message, err := h.csvc.NewMessage(currentUserID, chatIDUint, content, domain.SystemMessage)
 	if err != nil {
 		log.Printf("error sending system message: %v\n", err)

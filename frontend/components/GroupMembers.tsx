@@ -53,8 +53,9 @@ const GroupMembers = ({
         (() => searchUsers())();
     }, [searchUsers]);
 
-    const handleRemove = (userID: number) => {
-        removeUserFromGroup(chatID, userID);
+    const handleRemove = async (userID: number) => {
+        await removeUserFromGroup(chatID, userID);
+        setUsers((prev) => prev.filter((user) => user.id !== userID));
         setMenuIsOpen(false);
         handleClose();
     };

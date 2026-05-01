@@ -64,19 +64,17 @@ const Menu = ({ chatID, currentGroupUsers }: Props) => {
                         Add member
                     </button>
                 )}
-                {hasPermission("add users to group") && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setAddToGroupIsOpen(false);
-                            setGroupMembersIsOpen((prev) => !prev);
-                            setMenuIsOpen(false);
-                        }}
-                        className="cursor-pointer hover:bg-foreground/20 active:bg-background duration-300"
-                    >
-                        Group members
-                    </button>
-                )}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setAddToGroupIsOpen(false);
+                        setGroupMembersIsOpen((prev) => !prev);
+                        setMenuIsOpen(false);
+                    }}
+                    className="cursor-pointer hover:bg-foreground/20 active:bg-background duration-300"
+                >
+                    Group members
+                </button>
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
