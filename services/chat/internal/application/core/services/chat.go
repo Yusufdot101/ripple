@@ -253,3 +253,7 @@ func (csvc *ChatService) AddUsersToGroup(chatID uint, userIDs []uint) error {
 		return repo.GrantUsersChatRoles(userIDs, chatID, domain.Member)
 	})
 }
+
+func (csvc *ChatService) RemoveUserFromGroup(chatID, userID uint) error {
+	return csvc.repo.DeleteChatParticipant(chatID, userID)
+}

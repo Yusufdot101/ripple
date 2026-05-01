@@ -33,6 +33,21 @@ func (a *Adapter) InsertChatParticipants(chatParticipants []*domain.ChatParticip
 	return res.Error
 }
 
+func (a *Adapter) DeleteChatParticipant(chatID, userID uint) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res := a.db.WithContext(ctx).Where("chat_id = ? AND user_id = ?", chatID, userID).Delete(&ChatParticipant{})
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return domain.ErrRecordNotFound
+	}
+
+	return nil
+}
+
 func (a *Adapter) GetChatUsers(chatID, currentUserID uint) ([]*domain.ChatParticipant, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

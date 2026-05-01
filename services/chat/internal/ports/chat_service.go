@@ -24,5 +24,6 @@ type ChatService interface {
 	UserHasPermission(userID, chatID uint, permissionName domain.PermissionType) (bool, error)
 
 	AddUsersToGroup(chatID uint, userID []uint) error
+	RemoveUserFromGroup(chatID, userID uint) error
 	GetUserPermissions(chatID, userID uint) ([]*domain.Permission, error)
 }

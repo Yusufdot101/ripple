@@ -99,3 +99,91 @@ func (h *handler) addToGroup(c *gin.Context) {
 		h.hub.SendToUser(p.UserID, message)
 	}
 }
+
+func (h *handler) removeFromGroup(c *gin.Context) {
+	currentUserID := context.UserIDFromContext(c)
+
+	chatID, err := strconv.ParseUint(c.Param("chatId"), 10, strconv.IntSize)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid chat id",
+		})
+		return
+	}
+	chatIDUint := uint(chatID)
+
+	userID, err := strconv.ParseUint(c.Param("userId"), 10, strconv.IntSize)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid user id",
+		})
+		return
+	}
+	userIDUint := uint(userID)
+
+	userHasPermission, err := h.csvc.UserHasPermission(currentUserID, chatIDUint, domain.RemoveUserFromGroup)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "not permitted",
+		})
+		return
+	}
+
+	if !userHasPermission {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "not permitted",
+		})
+		return
+	}
+
+	err = h.csvc.RemoveUserFromGroup(chatIDUint, userIDUint)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "user removed from group",
+	})
+
+	users, err := h.csvc.SearchUsers("", []uint{currentUserID})
+	if err != nil {
+		log.Printf("error getting current user: %v\n", err)
+		return
+	}
+	if len(users) == 0 {
+		log.Printf("current user not found: %d\n", currentUserID)
+		return
+	}
+	currentUser := users[0]
+
+	removedUsers, err := h.csvc.SearchUsers("", []uint{userIDUint})
+	if err != nil {
+		log.Printf("error getting removed user: %v\n", err)
+		return
+	}
+
+	names := make([]string, 0, len(removedUsers))
+	for _, u := range removedUsers {
+		names = append(names, u.Name)
+	}
+	usernames := strings.Join(names, ", ")
+
+	message, err := h.csvc.NewMessage(currentUserID, chatIDUint, fmt.Sprintf("%s removed %s", currentUser.Name, usernames), domain.SystemMessage)
+	if err != nil {
+		log.Printf("error sending system message: %v\n", err)
+		return
+	}
+
+	participants, err := h.csvc.GetChatParticipants(chatIDUint, currentUserID)
+	if err != nil {
+		log.Printf("error getting chat participants: %v\n", err)
+		return
+	}
+
+	for _, p := range participants {
+		h.hub.SendToUser(p.UserID, message)
+	}
+}

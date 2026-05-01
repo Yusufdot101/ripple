@@ -33,7 +33,7 @@ func (rts *RepositoryTestSuite) TestGetChatByUserIDs() {
 	rts.Require().Nil(err)
 
 	// fetch the chat using those users' ids
-	gotChat, err := adapter.GetChatByUserIDs([]uint{participant1.ID, participant2.ID}, false)
+	gotChat, err := adapter.GetChatByUserIDs([]uint{participant1.UserID, participant2.UserID}, false)
 	rts.Require().Nil(err)
 	rts.Require().Equal(chat.ID, gotChat.ID)
 }

@@ -17,6 +17,26 @@ func (rts *RepositoryTestSuite) TestInsertChatParticipants() {
 	rts.Nil(err)
 }
 
+func (rts *RepositoryTestSuite) TestDeleteChatParticipant() {
+	adapater, err := NewAdapter(rts.dataSourceURL)
+	rts.Require().Nil(err)
+
+	chat := domain.NewChat("", false)
+	err = adapater.InsertChat(chat)
+	rts.Require().Nil(err)
+
+	chatParticipant := domain.NewChatParticipant(1, chat.ID)
+	err = adapater.InsertChatParticipants([]*domain.ChatParticipant{chatParticipant})
+	rts.Nil(err)
+
+	err = adapater.DeleteChatParticipant(chatParticipant.ChatID, chatParticipant.UserID)
+	rts.Require().Nil(err)
+
+	_, err = adapater.GetChatUsers(chatParticipant.ChatID, chatParticipant.UserID)
+	rts.Require().Error(err)
+	rts.Require().Equal(domain.ErrRecordNotFound, err)
+}
+
 func (rts *RepositoryTestSuite) TestGetChatUsers() {
 	adapater, err := NewAdapter(rts.dataSourceURL)
 	rts.Require().Nil(err)
