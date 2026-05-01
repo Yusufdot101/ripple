@@ -148,7 +148,7 @@ const Message = ({
             <div
                 tabIndex={0}
                 hidden={isEditingCurrentMessage}
-                className={`${message.MessageType === "information message" ? "w-full bg-foreground/10 justify-center items-center" : message.SenderID === userID ? "bg-accent/80" : "bg-foreground/20"} flex flex-col w-fit py-[4px] px-[8px] rounded-[4px]`}
+                className={`${message.MessageType === "information message" ? "w-full bg-foreground/10 justify-center items-center text-center" : message.SenderID === userID ? "bg-accent/80" : "bg-foreground/20"} flex flex-col w-fit py-[4px] px-[8px] rounded-[4px]`}
             >
                 {username &&
                     message.SenderID !== userID &&

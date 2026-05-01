@@ -4,14 +4,25 @@ interface Props {
     activeUsers: number[];
     user: UserType;
     handleClick: (user: UserType) => void;
+    handleRightClick?: (user: UserType) => void;
 }
 
-const UserCard = ({ activeUsers, user, handleClick }: Props) => {
+const UserCard = ({
+    activeUsers,
+    user,
+    handleClick,
+    handleRightClick,
+}: Props) => {
     return (
         <div
             tabIndex={0}
             onClick={() => handleClick(user)}
-            className={`${activeUsers?.includes(user.id) ? "bg-foreground/20" : ""} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
+            onContextMenu={(e) => {
+                if (!handleRightClick) return;
+                e.preventDefault();
+                handleRightClick(user);
+            }}
+            className={`${activeUsers?.includes(user.id) ? "bg-foreground/20" : "hover:bg-foreground/10 focus:bg-foreground/10"} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     handleClick(user);

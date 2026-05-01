@@ -53,6 +53,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
     const adminPermissions = {
         "send message": true,
         "add users to group": true,
+        "remove users from group": true,
     };
 
     const router = useRouter();
@@ -88,7 +89,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
 
     return (
         <div
-            className={`${createGroupOpen ? "translate-x-0" : "translate-x-full"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex-1 flex overflow-x-hidden`}
+            className={`${createGroupOpen ? "translate-x-0" : "translate-x-full invisible"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex-1 flex overflow-x-hidden`}
         >
             <div
                 className={`${showConfigScreen ? "-translate-x-full" : "translate-x-0"} h-full transition-transform duration-300 ease-in-out flex flex-1 flex-col gap-y-[8px]`}
@@ -158,7 +159,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
 
             {/*Group configuration screen*/}
             <div
-                className={`${showConfigScreen ? "translate-x-0" : "translate-x-full"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
+                className={`${showConfigScreen ? "translate-x-0" : "translate-x-full invisible"} w-full right-0 absolute h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
             >
                 <div className="flex w-full h-[32px] gap-x-[8px] items-center">
                     <BackArrowButton

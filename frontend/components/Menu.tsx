@@ -2,6 +2,7 @@
 import { getUserPermissions, PermissionType } from "@/utils/permissions";
 import { useEffect, useState } from "react";
 import AddUsersToGroup from "./AddUsersToGroup";
+import GroupMembers from "./GroupMembers";
 
 type Props = {
     chatID: number;
@@ -33,28 +34,47 @@ const Menu = ({ chatID, currentGroupUsers }: Props) => {
         setAddToGroupIsOpen(false);
     };
 
+    const [groupMembersIsOpen, setGroupMembersIsOpen] = useState(false);
+    const handleCloseGroupMembers = () => {
+        setGroupMembersIsOpen(false);
+    };
+
     return (
-        <div className="relative flex flex-col max-h-screen overflow-x-clip">
+        <div className="relative flex flex-col max-h-screen flex-1">
             <button
                 onClick={() => setMenuIsOpen((prev) => !prev)}
-                className="cursor-pointer ml-auto"
+                className="cursor-pointer ml-auto hover:text-accent duration-300 active:text-foreground"
             >
                 Menu
             </button>
 
             <div
-                className={`${menuIsOpen ? "max-h-96 p-[4px]" : "max-h-0 invisible p-0"} duration-300 w-50 border-1 border-foreground rounded-[4px] flex flex-col bg-background gap-y-[4px] absolute right-0 overflow-hidden top-[28px]`}
+                className={`${menuIsOpen ? "max-h-96 p-[4px]" : "max-h-0 invisible p-0"} z-10 duration-300 w-50 border-1 border-foreground rounded-[4px] flex flex-col bg-background gap-y-[4px] absolute right-0 overflow-hidden top-[28px]`}
             >
                 {hasPermission("add users to group") && (
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
+                            setGroupMembersIsOpen(false);
                             setAddToGroupIsOpen((prev) => !prev);
                             setMenuIsOpen(false);
                         }}
                         className="cursor-pointer hover:bg-foreground/20 active:bg-background duration-300"
                     >
                         Add member
+                    </button>
+                )}
+                {hasPermission("add users to group") && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAddToGroupIsOpen(false);
+                            setGroupMembersIsOpen((prev) => !prev);
+                            setMenuIsOpen(false);
+                        }}
+                        className="cursor-pointer hover:bg-foreground/20 active:bg-background duration-300"
+                    >
+                        Group members
                     </button>
                 )}
                 <button
@@ -73,6 +93,13 @@ const Menu = ({ chatID, currentGroupUsers }: Props) => {
                 handleClose={handleClose}
                 currentGroupUsers={currentGroupUsers}
                 chatID={chatID}
+            />
+
+            <GroupMembers
+                groupMembersIsOpen={groupMembersIsOpen}
+                handleClose={handleCloseGroupMembers}
+                chatID={chatID}
+                hasPermission={hasPermission}
             />
         </div>
     );

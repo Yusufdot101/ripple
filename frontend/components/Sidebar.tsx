@@ -73,7 +73,7 @@ const Sidebar = () => {
     return (
         <div className="flex-1 flex flex-col gap-y-[8px] relative overflow-hidden">
             <div
-                className={`${isCreatingGroup ? "-translate-x-full" : "translate-x-0"} h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
+                className={`${isCreatingGroup ? "-translate-x-full invisible" : "translate-x-0"} h-full transition-transform duration-300 ease-in-out flex flex-col gap-y-[8px]`}
             >
                 <CreateGroupButton
                     handleClick={() => setIsCreatingGroup(true)}

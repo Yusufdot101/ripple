@@ -5,7 +5,7 @@ type PermissionType string
 const (
 	SendMessage         PermissionType = "send message"
 	AddToGroup          PermissionType = "add users to group"
-	RemoveUserFromGroup PermissionType = "remove user from group"
+	RemoveUserFromGroup PermissionType = "remove users from group"
 )
 
 type Permission struct {

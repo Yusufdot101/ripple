@@ -35,7 +35,7 @@ const ChatCard = ({ activeChats, chat, handleClick }: Props) => {
         <div
             tabIndex={0}
             onClick={() => handleClick(chat.id)}
-            className={`${activeChats?.includes(chat.id) ? "bg-foreground/20" : ""} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
+            className={`${activeChats?.includes(chat.id) ? "bg-foreground/20" : "hover:bg-foreground/10 focus:bg-foreground/10"} border-foreground p-[4px] cursor-pointer duration-300 h-[64px]`}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     handleClick(chat.id);

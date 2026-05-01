@@ -285,7 +285,7 @@ const ChatPage = () => {
     return (
         <div
             ref={containerRef}
-            className="flex-1 min-h-0 flex flex-col gap-y-[8px] relative"
+            className="flex-1 min-h-0 flex flex-col gap-y-[8px] overflow-x-clip"
             onClick={() => {
                 setMenuIsOpen(false);
             }}
@@ -301,14 +301,15 @@ const ChatPage = () => {
             >
                 <span className="text-[16px]">Currently offline</span>
             </div>
-            <div className="flex w-full justify-between">
-                <div className="flex w-full h-[32px] gap-x-[8px] items-center min-[900px]:hidden">
+
+            <div className="flex">
+                <div className="flex h-[32px] gap-x-[8px] items-center min-[900px]:hidden">
                     <BackArrowButton
                         handleClick={() => router.back()}
                         text="Chat"
                     />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 flex">
                     {chatID && (
                         <Menu
                             chatID={+chatID}
@@ -317,6 +318,7 @@ const ChatPage = () => {
                     )}
                 </div>
             </div>
+
             <div className="flex justify-center shrink-0">
                 <div className="flex gap-x-[4px]">
                     {chat?.name !== ""

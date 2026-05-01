@@ -5,6 +5,7 @@ import { UserType } from "@/utils/users";
 interface Props {
     selectedUsers: number[];
     handleUserClick: (user: UserType) => void;
+    handleUserRightClick?: (user: UserType) => void;
     excludeUsers?: number[];
     users: UserType[];
     isLoading: boolean;
@@ -13,6 +14,7 @@ interface Props {
 const Contacts = ({
     selectedUsers,
     handleUserClick,
+    handleUserRightClick,
     excludeUsers,
     users,
     isLoading,
@@ -44,6 +46,7 @@ const Contacts = ({
                         key={user.id}
                         user={user}
                         handleClick={handleUserClick}
+                        handleRightClick={handleUserRightClick}
                     />
                 ))}
             </div>
