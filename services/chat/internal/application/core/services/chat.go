@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"maps"
 	"slices"
@@ -78,6 +79,8 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 					permission = domain.AddToGroup
 				case "remove users from group":
 					permission = domain.RemoveUserFromGroup
+				case "delete messages":
+					permission = domain.DeleteMessages
 				default:
 					return fmt.Errorf("%w: %s", domain.ErrInvalidPermission, permissionName)
 				}
@@ -202,17 +205,33 @@ func (csvc *ChatService) GetMessages(chatID uint, messageFilter domain.GetMessag
 	return csvc.repo.GetMessages(chatID, messageFilter)
 }
 
-func (csvc *ChatService) DeleteMessage(chatID, userID, messageID uint) (uint, error) {
+func (csvc *ChatService) DeleteMessage(chatID, userID, messageID uint) (*domain.Message, error) {
 	hasPermission, err := csvc.UserHasPermission(userID, chatID, domain.DeleteMessages)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
+
+	var message *domain.Message
 	if hasPermission {
-		_, err = csvc.repo.DeleteAnyMessage(chatID, messageID)
+		users, err := csvc.SearchUsers("", []uint{userID})
+		if err != nil {
+			return nil, err
+		}
+		if len(users) != 1 {
+			return nil, errors.New("error getting the user")
+		}
+		user := users[0]
+		message, err = csvc.repo.DeleteAnyMessage(chatID, userID, user.Name, messageID)
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		_, err = csvc.repo.DeleteMessage(chatID, userID, messageID)
+		message, err = csvc.repo.DeleteMessage(chatID, userID, messageID)
 	}
-	return chatID, err
+	if err != nil {
+		return nil, err
+	}
+	return message, err
 }
 
 func (csvc *ChatService) EditMessage(userID, messageID uint, newContent string) (*domain.Message, error) {

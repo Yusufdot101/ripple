@@ -1,33 +1,16 @@
 "use client";
-import { getUserPermissions, PermissionType } from "@/utils/permissions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddUsersToGroup from "./AddUsersToGroup";
 import GroupMembers from "./GroupMembers";
 
 type Props = {
     chatID: number;
     currentGroupUsers: number[];
+    hasPermission: (permissionName: string) => boolean;
 };
 
-const Menu = ({ chatID, currentGroupUsers }: Props) => {
+const Menu = ({ chatID, currentGroupUsers, hasPermission }: Props) => {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
-    const [permissions, setPermissions] = useState<PermissionType[]>([]);
-    useEffect(() => {
-        (() => setPermissions([]))();
-        if (chatID <= 0) return;
-        (async () => {
-            const permissions = await getUserPermissions(chatID);
-            setPermissions(permissions ?? []);
-        })();
-    }, [chatID]);
-
-    const hasPermission = (permissionName: string): boolean => {
-        return (
-            permissions.filter(
-                (permission) => permission.name === permissionName,
-            ).length !== 0
-        );
-    };
 
     const [addToGroupIsOpen, setAddToGroupIsOpen] = useState(false);
     const handleClose = () => {

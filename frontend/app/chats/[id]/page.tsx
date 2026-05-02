@@ -16,6 +16,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import Menu from "@/components/Menu";
+import { getUserPermissions, PermissionType } from "@/utils/permissions";
 
 const ChatPage = () => {
     const isOnline = useOnlineStatus();
@@ -142,7 +143,11 @@ const ChatPage = () => {
                     setMessages((prev) => {
                         return prev.map((msg) =>
                             msg.ID === data.messageID
-                                ? { ...msg, Deleted: true }
+                                ? {
+                                      ...msg,
+                                      Deleted: true,
+                                      Content: data.content,
+                                  }
                                 : msg,
                         );
                     });
@@ -286,6 +291,26 @@ const ChatPage = () => {
 
     const router = useRouter();
 
+    const [permissions, setPermissions] = useState<PermissionType[]>([]);
+    useEffect(() => {
+        (() => setPermissions([]))();
+        if (!chatID) return;
+        if (+chatID <= 0) return;
+        (async () => {
+            const permissions = await getUserPermissions(+chatID);
+            console.log("permissions: ", permissions);
+            setPermissions(permissions ?? []);
+        })();
+    }, [chatID]);
+
+    const hasPermission = (permissionName: string): boolean => {
+        return (
+            permissions.filter(
+                (permission) => permission.name === permissionName,
+            ).length !== 0
+        );
+    };
+
     return (
         <div
             ref={containerRef}
@@ -318,6 +343,7 @@ const ChatPage = () => {
                         <Menu
                             chatID={+chatID}
                             currentGroupUsers={chatUsers.map((user) => user.id)}
+                            hasPermission={hasPermission}
                         />
                     )}
                 </div>
@@ -343,6 +369,7 @@ const ChatPage = () => {
                     .sort((a, b) => a.CreatedAt.localeCompare(b.CreatedAt))
                     .map((message) => (
                         <Message
+                            hasPermission={hasPermission}
                             containerRef={containerRef}
                             menuIsOpen={menuIsOpen}
                             selectedMessageID={selectedMessageID ?? -1}

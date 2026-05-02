@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -82,70 +83,108 @@ func (a *Adapter) GetMessages(chatID uint, messageFilter domain.GetMessageFilter
 	return messages, nil
 }
 
-func (a *Adapter) DeleteMessage(chatID, userID, messageID uint) (uint, error) {
+func (a *Adapter) DeleteMessage(chatID, userID, messageID uint) (*domain.Message, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var messageModel Message
+	messageModel := &Message{}
 
 	err := a.db.WithContext(ctx).
-		Select("chat_id").
 		Where("id = ? AND sender_id = ?", messageID, userID).
-		First(&messageModel).Error
+		First(messageModel).Error
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
+	content := "Message deleted"
 	res := a.db.WithContext(ctx).
 		Model(&Message{}).
 		Where("id = ? AND sender_id = ? AND chat_id = ?", messageID, userID, chatID).
 		Updates(map[string]any{
-			"content":    "",
+			"content":    content,
 			"deleted_at": gorm.Expr("Now()"),
 			"deleted":    true,
 		})
 	if res.Error != nil {
-		return 0, res.Error
+		return nil, res.Error
 	}
 
 	if res.RowsAffected == 0 {
-		return 0, domain.ErrRecordNotFound
+		return nil, domain.ErrRecordNotFound
 	}
 
-	return messageModel.ChatID, nil
+	status := messageModel.Status
+	if status == "" {
+		status = domain.MessageDelivered
+	}
+	message := &domain.Message{
+		ID:          messageModel.ID,
+		ChatID:      messageModel.ChatID,
+		CreatedAt:   messageModel.CreatedAt,
+		DeletedAt:   messageModel.DeletedAt,
+		MessageType: messageModel.MessageType,
+		SenderID:    messageModel.SenderID,
+		Content:     content,
+		UpdatedAt:   messageModel.UpdatedAt,
+		Deleted:     messageModel.Deleted,
+		Status:      status,
+	}
+
+	return message, nil
 }
 
-func (a *Adapter) DeleteAnyMessage(chatID, messageID uint) (uint, error) {
+func (a *Adapter) DeleteAnyMessage(chatID, userID uint, username string, messageID uint) (*domain.Message, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var messageModel Message
 
 	err := a.db.WithContext(ctx).
-		Select("chat_id").
 		Where("id = ? AND chat_id = ?", messageID, chatID).
 		First(&messageModel).Error
 	if err != nil {
-		return 0, err
+		return nil, err
+	}
+
+	content := "Message deleted"
+	if messageModel.SenderID != userID {
+		content = fmt.Sprintf("Message deleted by %s", username)
 	}
 
 	res := a.db.WithContext(ctx).
 		Model(&Message{}).
 		Where("id = ? AND chat_id = ?", messageID, chatID).
 		Updates(map[string]any{
-			"content":    "",
+			"content":    content,
 			"deleted_at": gorm.Expr("Now()"),
 			"deleted":    true,
 		})
 	if res.Error != nil {
-		return 0, res.Error
+		return nil, res.Error
 	}
 
 	if res.RowsAffected == 0 {
-		return 0, domain.ErrRecordNotFound
+		return nil, domain.ErrRecordNotFound
 	}
 
-	return messageModel.ChatID, nil
+	status := messageModel.Status
+	if status == "" {
+		status = domain.MessageDelivered
+	}
+	message := &domain.Message{
+		ID:          messageModel.ID,
+		ChatID:      messageModel.ChatID,
+		CreatedAt:   messageModel.CreatedAt,
+		DeletedAt:   messageModel.DeletedAt,
+		MessageType: messageModel.MessageType,
+		SenderID:    messageModel.SenderID,
+		Content:     content,
+		UpdatedAt:   messageModel.UpdatedAt,
+		Deleted:     messageModel.Deleted,
+		Status:      status,
+	}
+
+	return message, nil
 }
 
 func (a *Adapter) EditMessage(userID, messageID uint, newContent string) (*domain.Message, error) {

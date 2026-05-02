@@ -16,6 +16,7 @@ interface Props {
     handleClickEdit: (messageID: number) => void;
     handleCancelMessageEdit: () => void;
     username?: string;
+    hasPermission: (permissionName: string) => boolean;
 }
 
 const Message = ({
@@ -29,6 +30,7 @@ const Message = ({
     editingMessageID,
     handleCancelMessageEdit,
     username,
+    hasPermission,
 }: Props) => {
     const userID = useAuthStore((state) => state.userID);
     const messageIsEdited = message.CreatedAt !== message.UpdatedAt;
@@ -90,11 +92,13 @@ const Message = ({
                     handleCancelMessageEdit();
                     return;
                 }
+                if (message.Deleted) return;
                 if (e.key !== "Delete") return;
                 e.preventDefault();
 
                 if (
-                    message.SenderID !== userID ||
+                    (message.SenderID !== userID &&
+                        !hasPermission("delete message")) ||
                     message.MessageType === "information message"
                 )
                     return;
@@ -121,8 +125,10 @@ const Message = ({
                 });
             }}
             onContextMenu={(e) => {
+                if (message.Deleted) return;
                 if (
-                    message.SenderID !== userID ||
+                    (message.SenderID !== userID &&
+                        !hasPermission("delete messages")) ||
                     message.MessageType === "information message"
                 )
                     return;
@@ -179,7 +185,7 @@ const Message = ({
                                 ></path>
                             </g>
                         </svg>
-                        <span>Message Deleted</span>
+                        <p className="whitespace-pre-wrap">{message.Content}</p>
                     </div>
                 ) : (
                     <p className="whitespace-pre-wrap">{message.Content}</p>

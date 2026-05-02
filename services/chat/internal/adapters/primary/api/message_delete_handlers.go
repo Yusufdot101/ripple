@@ -36,7 +36,7 @@ func (h *handler) deleteMessage(ctx *gin.Context) {
 	}
 	messageIDUint := uint(messageID)
 
-	chatIDUint, err = h.csvc.DeleteMessage(chatIDUint, currentUserID, messageIDUint)
+	message, err := h.csvc.DeleteMessage(chatIDUint, currentUserID, messageIDUint)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -59,9 +59,11 @@ func (h *handler) deleteMessage(ctx *gin.Context) {
 	msg := &struct {
 		Type      string `json:"type"`
 		MessageID uint   `json:"messageID"`
+		Content   string `json:"content"`
 	}{
 		Type:      "messageDeleted",
-		MessageID: messageIDUint,
+		MessageID: message.ID,
+		Content:   message.Content,
 	}
 	for _, p := range participants {
 		h.hub.SendToUser(p.UserID, msg)
