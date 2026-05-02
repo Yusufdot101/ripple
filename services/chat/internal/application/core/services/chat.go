@@ -323,13 +323,13 @@ func (csvc *ChatService) BanUser(
 	}
 
 	err = csvc.repo.WithTx(func(repo ports.Repository) error {
-		err = csvc.RemoveUserFromGroup(chatID, currentUserID, userID)
+		err := repo.DeleteChatParticipant(chatID, userID)
 		if err != nil {
 			return err
 		}
 
 		chatBan := domain.NewChatBan(chatID, userID, currentUserID, reason, expiresAt)
-		err = csvc.repo.InsertChatBan(chatBan)
+		err = repo.InsertChatBan(chatBan)
 		if err != nil {
 			return err
 		}

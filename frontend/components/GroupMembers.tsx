@@ -166,7 +166,7 @@ const GroupMembers = ({
                                 setBanMenuIsOpen(true);
                             }}
                             onKeyDown={(e) => {
-                                if (e.key !== "Escape") return;
+                                if (e.key !== "Enter") return;
                                 e.stopPropagation();
                                 setMenuIsOpen(false);
                                 setBanMenuIsOpen(true);
@@ -213,7 +213,7 @@ const GroupMembers = ({
                                 />
                             </div>
                             <div className="flex flex-col gap-y-[2px]">
-                                <label htmlFor="banReason">
+                                <label htmlFor="banDuration">
                                     Expiry (-1 for indefinitely)
                                 </label>
                                 <div className="flex gap-x-[2px]">
@@ -269,7 +269,7 @@ const GroupMembers = ({
                                     }}
                                     onKeyDown={(e) => {
                                         e.stopPropagation();
-                                        if (e.key !== "Escape") return;
+                                        if (e.key !== "Enter") return;
                                         e.preventDefault();
                                         handleBanUser();
                                     }}

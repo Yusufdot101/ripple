@@ -34,10 +34,8 @@ export const removeUserFromGroup = async (chatID: number, userID: number) => {
     }
 };
 
-const now = new Date();
-
 function addTime(value: number, unit: string): Date {
-    const d = new Date(now);
+    const d = new Date();
 
     switch (unit) {
         case "hours":
@@ -87,7 +85,7 @@ export const banUser = async (
     if (!res.ok) {
         const errBody = await res.text();
         throw new Error(
-            errBody || `Failed to remove user from group (${res.status})`,
+            errBody || `Failed to ban user from group (${res.status})`,
         );
     }
     return true;

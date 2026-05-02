@@ -201,7 +201,11 @@ func (h *handler) banFromGroup(c *gin.Context) {
 
 	err = h.csvc.BanUser(chatIDUint, currentUserID, req.UserID, req.Reason, req.ExpiresAt)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		status := http.StatusInternalServerError
+		if errors.Is(err, domain.ErrNotPermitted) {
+			status = http.StatusForbidden
+		}
+		c.JSON(status, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -241,9 +245,6 @@ func (h *handler) banFromGroup(c *gin.Context) {
 	// get the chat members before removing the user to avoid not found error, as the user wont be allowed if he is not in the chat
 	participants, err := h.csvc.GetChatParticipants(chatIDUint, currentUserID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to get chat participants",
-		})
 		log.Printf("error getting chat participants: %v\n", err)
 		return
 	}
