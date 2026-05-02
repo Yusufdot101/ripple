@@ -93,6 +93,9 @@ func (a *Adapter) DeleteMessage(chatID, userID, messageID uint) (*domain.Message
 		Where("id = ? AND sender_id = ?", messageID, userID).
 		First(messageModel).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrRecordNotFound
+		}
 		return nil, err
 	}
 
@@ -111,6 +114,13 @@ func (a *Adapter) DeleteMessage(chatID, userID, messageID uint) (*domain.Message
 
 	if res.RowsAffected == 0 {
 		return nil, domain.ErrRecordNotFound
+	}
+
+	// Reload updated row so returned payload matches DB state.
+	if err := a.db.WithContext(ctx).
+		Where("id = ? AND chat_id = ?", messageID, chatID).
+		First(messageModel).Error; err != nil {
+		return nil, err
 	}
 
 	status := messageModel.Status

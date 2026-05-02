@@ -51,10 +51,9 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
     });
 
     const adminPermissions = {
-        // "send message": true,
-        // "add users to group": true,
-        // "remove users from group": true,
-        ...memberPermissions,
+        "send message": true,
+        "add users to group": true,
+        "remove users from group": true,
         "delete messages": true,
     };
 

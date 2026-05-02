@@ -98,7 +98,7 @@ const Message = ({
 
                 if (
                     (message.SenderID !== userID &&
-                        !hasPermission("delete message")) ||
+                        !hasPermission("delete messages")) ||
                     message.MessageType === "information message"
                 )
                     return;
@@ -214,7 +214,8 @@ const Message = ({
                         >
                             Delete
                         </button>
-                        {createdlessThanHourAgo ? (
+                        {createdlessThanHourAgo &&
+                        message.SenderID === userID ? (
                             <button
                                 aria-label="edit message"
                                 className="hover:bg-blue-500 hover:text-foreground cursor-pointer duration-300 rounded-[2px] p-[4px]"
