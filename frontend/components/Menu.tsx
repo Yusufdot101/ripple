@@ -72,7 +72,6 @@ const Menu = ({ chatID, currentGroupUsers, hasPermission }: Props) => {
             <AddUsersToGroup
                 addToGroupIsOpen={addToGroupIsOpen}
                 handleClose={handleClose}
-                currentGroupUsers={currentGroupUsers}
                 chatID={chatID}
             />
 

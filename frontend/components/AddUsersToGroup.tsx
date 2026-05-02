@@ -1,6 +1,6 @@
 "use client";
 import Contacts from "@/components/Contacts";
-import { getUsersByEmail, UserType } from "@/utils/users";
+import { getAddableChatUsers, getUsersByEmail, UserType } from "@/utils/users";
 import { useEffect, useState } from "react";
 import BackArrowButton from "./BackArrowButton";
 import XButton from "./XButton";
@@ -10,16 +10,10 @@ import { addUsersToGroup } from "@/utils/groups";
 interface Props {
     handleClose: () => void;
     addToGroupIsOpen: boolean;
-    currentGroupUsers: number[];
     chatID: number;
 }
 
-const AddUsersToGroup = ({
-    handleClose,
-    addToGroupIsOpen,
-    currentGroupUsers,
-    chatID,
-}: Props) => {
+const AddUsersToGroup = ({ handleClose, addToGroupIsOpen, chatID }: Props) => {
     const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
     const handleClick = async (clickedUser: UserType) => {
         setSelectedUsers((prev) => {
@@ -40,7 +34,7 @@ const AddUsersToGroup = ({
     const searchUsers = async (email: string = "") => {
         setIsLoading(true);
         try {
-            const users = await getUsersByEmail(email);
+            const users = await getAddableChatUsers(chatID, email);
             setUsers(users ?? []);
         } finally {
             setIsLoading(false);
@@ -107,10 +101,7 @@ const AddUsersToGroup = ({
                             users={users}
                             handleUserClick={handleClick}
                             selectedUsers={selectedUsers.map((user) => user.id)}
-                            excludeUsers={[
-                                ...selectedUsers.map((user) => user.id),
-                                ...(currentGroupUsers ?? []),
-                            ]}
+                            excludeUsers={[]}
                         />
                     </div>
 

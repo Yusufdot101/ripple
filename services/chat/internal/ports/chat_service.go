@@ -14,7 +14,7 @@ type ChatService interface {
 	GetChatUsers(chatID, currentUserID uint) ([]*userpb.User, error)
 	GetChatsByUserID(userID uint, query string) ([]*domain.Chat, error)
 	SearchUsers(query string, ids []uint) ([]*userpb.User, error)
-	GetContacts(uint, []uint, string) ([]*userpb.User, error)
+	GetContacts(currentUserID uint, excludeIDs []uint, query string) ([]*userpb.User, error)
 
 	GetChatByUserIDs(userIDs []uint, isGroup bool) (*domain.Chat, error)
 	GetChatByID(chatID, currentUserID uint) (*domain.Chat, error)
@@ -30,4 +30,5 @@ type ChatService interface {
 	GetUserPermissions(chatID, userID uint) ([]*domain.Permission, error)
 
 	BanUser(chatIDUint, currentUserID, userID uint, reason string, ExpiresAt *time.Time) error
+	GetAddableChatUsers(chatID, currentUserID uint, query string) ([]*userpb.User, error)
 }

@@ -125,3 +125,33 @@ func (h *handler) getChatUsers(ctx *gin.Context) {
 		"chatUsers": chatUsers,
 	})
 }
+
+func (h *handler) getAddableChatUsers(c *gin.Context) {
+	currentUserID := context.UserIDFromContext(c)
+	q := c.Query("q")
+
+	chatID, err := strconv.ParseUint(c.Param("chatId"), 10, strconv.IntSize)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid message id",
+		})
+		return
+	}
+	if chatID > uint64(^uint(0)) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid message id",
+		})
+		return
+	}
+	chatIDUint := uint(chatID)
+
+	addableUsers, err := h.csvc.GetAddableChatUsers(chatIDUint, currentUserID, q)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": addableUsers,
+	})
+}

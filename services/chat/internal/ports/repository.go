@@ -30,4 +30,5 @@ type Repository interface {
 	GetUserPermissions(userID, chatID uint) ([]*domain.Permission, error)
 
 	InsertChatBan(chatBan *domain.ChatBan) error
+	GetChatBans(chatID uint) ([]*domain.ChatBan, error)
 }

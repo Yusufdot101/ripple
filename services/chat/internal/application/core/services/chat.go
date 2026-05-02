@@ -338,3 +338,31 @@ func (csvc *ChatService) BanUser(
 	})
 	return err
 }
+
+func (csvc *ChatService) GetAddableChatUsers(chatID, currentUserID uint, query string) ([]*userpb.User, error) {
+	ctx := context.Background()
+	chatBans, err := csvc.repo.GetChatBans(chatID)
+	if err != nil {
+		return nil, err
+	}
+
+	chatUsers, err := csvc.repo.GetChatUsers(chatID, currentUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	excludedUsersID := []uint{}
+	for _, ban := range chatBans {
+		excludedUsersID = append(excludedUsersID, ban.UserID)
+	}
+	for _, user := range chatUsers {
+		excludedUsersID = append(excludedUsersID, user.UserID)
+	}
+
+	grpcUsers, err := csvc.userService.GetContacts(ctx, query, excludedUsersID, currentUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return grpcUsers, nil
+}
