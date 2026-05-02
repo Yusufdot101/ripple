@@ -55,6 +55,7 @@ const CreateGroup = ({ handleClose, createGroupOpen }: Props) => {
         "add users to group": true,
         "remove users from group": true,
         "delete messages": true,
+        "ban users": true,
     };
 
     const router = useRouter();

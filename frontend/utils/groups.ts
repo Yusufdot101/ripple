@@ -33,3 +33,62 @@ export const removeUserFromGroup = async (chatID: number, userID: number) => {
         );
     }
 };
+
+const now = new Date();
+
+function addTime(value: number, unit: string): Date {
+    const d = new Date(now);
+
+    switch (unit) {
+        case "hours":
+            d.setHours(d.getHours() + value);
+            break;
+        case "days":
+            d.setDate(d.getDate() + value);
+            break;
+        case "weeks":
+            d.setDate(d.getDate() + value * 7);
+            break;
+        case "months":
+            d.setMonth(d.getMonth() + value);
+            break;
+        case "years":
+            d.setFullYear(d.getFullYear() + value);
+            break;
+    }
+
+    return d;
+}
+
+export const banUser = async (
+    chatID: number,
+    userID: number,
+    reason: string,
+    timeFrame: string,
+    timeValue: number,
+): Promise<boolean | undefined> => {
+    const expiry =
+        timeValue !== -1 ? addTime(timeValue, timeFrame).toISOString() : "";
+    const res = await api(`${BASE_CHAT_SERVICE_API_URL}/chats/${chatID}/ban`, {
+        method: "POST",
+        body: JSON.stringify({
+            userId: userID,
+            reason: reason,
+            expiresAt: expiry !== "" ? expiry : undefined,
+        }),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!res) {
+        throw new Error("No response from chat service");
+    }
+    if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(
+            errBody || `Failed to remove user from group (${res.status})`,
+        );
+    }
+    return true;
+};

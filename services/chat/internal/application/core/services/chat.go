@@ -81,6 +81,8 @@ func (csvc *ChatService) NewChatWithParticipants(createChatRequest domain.Create
 					permission = domain.RemoveUserFromGroup
 				case "delete messages":
 					permission = domain.DeleteMessages
+				case "ban users":
+					permission = domain.BanUsers
 				default:
 					return fmt.Errorf("%w: %s", domain.ErrInvalidPermission, permissionName)
 				}
